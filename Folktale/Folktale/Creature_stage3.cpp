@@ -1,108 +1,241 @@
-#include "Creature_stage3.h"
-#define SNAKESIZE 10
+ï»¿#include "Creature_stage3.h"
 
-//±¸··ÀÌ ¸Ş¼­µå ±¸Çö -------------------------------------------------------------------------------
-Snake::Snake(int x, int y, int speed, double health, int attackPower, int tX, int tY) : Monster(x, y, speed, health, attackPower, tX, tY){//init ÇÔ¼ö -> ÃÊ±â°ª ¼³Á¤
-	//±¸··ÀÌ ÁÂÇ¥ ÃÊ±â°ª ¼³Á¤ 
-	//±¸··ÀÌÀÇ ±æÀÌ´Â ÀÏ´Ü 10°³·Î ÁöÁ¤
+default_random_engine generator;
+
+//êµ¬ë ì´ ë©”ì„œë“œ êµ¬í˜„ -------------------------------------------------------------------------------
+Snake::Snake(int x, int y, int speed, double health, int attackPower, int tX, int tY) : Monster(x, y, speed, health, attackPower, tX, tY){//init í•¨ìˆ˜ -> ì´ˆê¸°ê°’ ì„¤ì •
+	//êµ¬ë ì´ ì¢Œí‘œ ì´ˆê¸°ê°’ ì„¤ì • 
+	//êµ¬ë ì´ì˜ ê¸¸ì´ëŠ” ì¼ë‹¨ 10ê°œë¡œ ì§€ì •
+    //ì²˜ìŒ êµ¬ë ì´ëŠ” í™”ë©´ì˜ ì¤‘ì•™ì— ìœ„ì¹˜
 	int centerX = screenWidth / 2;
 	int centerY = screenHeight / 2;
 	for (int i = 0;i < SNAKESIZE;i++) {
 		Node* n = new Node;
-		n->sX=i+ centerX;
+		n->sX=i + centerX;
 		n->sY = centerY;
+        n->s_output ='#';
 		snakeList.push_back(n);
 	}
+    dSnake = LEFT; //êµ¬ë ì´ ì²˜ìŒ í—¤ë“œ ë°©í–¥ì„ LEFTë¡œ ì„¤ì •
+}
+
+void Snake::Draw() { //ì–˜ëŠ” ë­í•˜ëŠ” í•¨ìˆ˜ì§€
 
 }
 
-void Snake::Draw() { //¾ê´Â ¹¹ÇÏ´Â ÇÔ¼öÁö
-
+void Snake::GetAttackted(int damage) { //ìƒê°í•´ë³´ë‹ˆ êµ¬ë ì´ëŠ” ë°ë¯¸ì§€ë¥¼ ì•ˆ ë°›ìŒ
+	
 }
 
-void Snake::GetAttackted(int damage) { //»ı°¢ÇØº¸´Ï ±¸··ÀÌ´Â µ¥¹ÌÁö¸¦ ¾È ¹ŞÀ½
-	//double hp = getHealth(); //ÇöÀç SnakeÀÇ hp °¡Á®¿À±â
-	//hp -= damage; 
-	//if (hp < 0) //¸¸¾à Á×¾úÀ¸¸é 0À¸·Î ¼³Á¤
-	//	hp = 0;
-	//setHealth(hp); //hp¿¡¼­ damage ¹ŞÀº °ªÀ¸·Î Àç¼³Á¤
+bool Snake::isNodeInList(int x, int y) {
+    for (const auto& node : snakeList) {
+        if (node->sX == x && node->sY == y) {//ì¼ì¹˜í•˜ëŠ” ë…¸ë“œê°€ ìˆìœ¼ë©´ true ë°˜í™˜
+            return true;
+        }
+    }
+    return false;
 }
 
-void Snake::move(int newX, int newY) { //newX¿Í newY´Â ¹üÀ§È®ÀÎÀÌ ³¡³­ °ª 
-	//front¿¡ »õ ³ëµå Ãß°¡
-	Node* n = new Node;
-	n->sX = newX;
-	n->sY = newY;
-	snakeList.push_front(n);
-	//back¿¡¼­ ³ëµå Á¦°Å
-	Node* lastNode = snakeList.back();
-	delete lastNode;
+void Snake::move(int newX, int newY) { //newXì™€ newYëŠ” ì‚¬ìš©í•˜ì§€ ì•ŠìŒ
+    //snakeëŠ” ëœë¤í•˜ê²Œ ì›€ì§ì„ => ì´ í•¨ìˆ˜ ì•ˆì—ì„œ ì¢Œí‘œ ê°±ì‹ ë˜ë„ë¡ ìˆ˜ì •í•˜ê¸°
+    //ì¢Œ, ìš°, ìœ„, ì•„ë˜ ì¤‘ í•˜ë‚˜ê°€ ëœë¤í•˜ê²Œ ê²°ì •
+    //switchë¬¸ìœ¼ë¡œ ì¢Œí‘œ ê°±ì‹ 
+    uniform_int_distribution<int> d(0, 3);
+    
+    //ìƒˆ ì¢Œí‘œ ë…¸ë“œ
+    Node* head = new Node;
+    head->s_output = '#';
+   
+
+    //ìƒˆ ì¢Œí‘œ ê³„ì‚°
+    int newHeadX = snakeList.front()->sX;
+    int newHeadY = snakeList.front()->sY;
+
+
+    do{ //ì§€ê¸ˆ frontì— ìˆëŠ” ì¢Œí‘œë‘ ì¼ì¹˜í•˜ì§€ ì•Šì„ ë•Œê¹Œì§€ ì¢Œí‘œê°’ í• ë‹¹ ë°˜ë³µ
+        int direction = d(generator);
+        switch (direction) {
+        case LEFT:
+            dSnake = LEFT;
+            //xì¢Œí‘œ
+            newHeadX--;
+            break;
+        case RIGHT:
+            dSnake = RIGHT;
+            newHeadX++;
+            break;
+        case UP:
+            dSnake = UP;
+            newHeadY--;
+            break;
+        case DOWN:
+            dSnake = DOWN;
+            newHeadY++;
+            break;
+        default:
+            break;
+        }
+    } while (isNodeInList(newHeadX, newHeadY) //ê²¹ì¹˜ë©´ ë£¨í”„ ë°˜ë³µ
+        || newHeadX < 0 || newHeadX >= screenWidth //ë§µ ë„ˆë¹„ ê²€ì¦
+        || newHeadY < 0 || newHeadY >= screenHeight);//ë§µ ë†’ì´ ê²€ì¦
+
+	//frontì— ìƒˆ ë…¸ë“œ ì¶”ê°€;
+    head->sX = newHeadX;
+    head->sY = newHeadY;
+	snakeList.push_front(head);
+	//backì—ì„œ ë…¸ë“œ ì œê±°
+	Node* tail = snakeList.back();
+	delete tail;
 	snakeList.pop_back();
 }
 
 void Snake::attackDamage(int attackPower) { 
-	//±¸··ÀÌ°¡ ±îÄ¡ÇÑÅ× µ¥¹ÌÁö ÁÖ´Â ¸Ş¼­µå -> ±îÄ¡ÀÇ attacked¸Ş¼­µå·Î ¾²ÀÚ
-	//ÀÌ ¸Ş¼­µå´Â isCollidingÀÌ trueÀÏ ¶§ È£Ãâ
-
+	//êµ¬ë ì´ê°€ ê¹Œì¹˜í•œí…Œ ë°ë¯¸ì§€ ì£¼ëŠ” ë©”ì„œë“œ -> ê¹Œì¹˜ì˜ attackedë©”ì„œë“œë¡œ ì“°ì
+	
 }
 
 
 Snake::~Snake() {
-	//snake ¸Ş¸ğ¸® ÇØÁ¦
-	while (!snakeList.empty()) {
-		delete snakeList.back();
-		snakeList.pop_back();
-	}
+	//snake ë©”ëª¨ë¦¬ í•´ì œ
+    while (!snakeList.empty()) {
+        delete snakeList.front();
+        snakeList.pop_front();
+    }
 }
 
-//±îÄ¡ ¸Ş¼­µå ±¸Çö -----------------------------------------------------------------------------
+//í­íƒ„ ë©”ì„œë“œ êµ¬í˜„ --------------------------------------------------------------------------------------
+//êµ¬ë ì´ ë©”ì„œë“œ êµ¬í˜„ -------------------------------------------------------------------------------
+Bomb::Bomb(int x, int y, int speed, double health, int attackPower, int tX, int tY) : Monster(x, y, speed, health, attackPower, tX, tY) {//init í•¨ìˆ˜ -> ì´ˆê¸°ê°’ ì„¤ì •
+    bb_output = '!';
+    bb_out_prev = '?';
+    //checkCountê°€ 6ì´ ë˜ëŠ” ìˆœê°„ !ì„ ì¶œë ¥í•˜ê³  ì¶©ëŒì—¬ë¶€ í™•ì¸ ë° ì–´íƒ 
+    //checkCountê°€ 0ì´ ë˜ëŠ” ìˆœê°„ë¶€í„° ê¹œë¹¡ê±°ë¦´ê±°ì„ -> 0ë¶€í„° 5ê¹Œì§€ í•„ìš”í•œë° ì§ìˆ˜ë©´ ì¶œë ¥ í™€ìˆ˜ë©´ ë¯¸ì¶œë ¥? ì¶œë ¥
+    checkCount = -20; 
+   
+}
+
+void Bomb::Draw() { //ì–˜ëŠ” ë­í•˜ëŠ” í•¨ìˆ˜ì§€
+
+}
+
+void Bomb::GetAttackted(int damage) { //ìƒê°í•´ë³´ë‹ˆ êµ¬ë ì´ëŠ” ë°ë¯¸ì§€ë¥¼ ì•ˆ ë°›ìŒ
+
+}
+
+void Bomb::move(int newX, int newY) {
+    if (checkCount < 0) { //ë§Œì•½ 0ë³´ë‹¤ ì‘ì„ ê²½ìš° ê¹Œì¹˜ì˜ ìœ„ì¹˜ê°’ì„ ê°€ì ¸ì™€ì„œ ë³¸ì¸ ì¢Œí‘œë¡œ í• ë‹¹í•œë‹¤
+        this->setXY(newX, newY);
+    }
+}
+
+void Bomb::attackDamage(int attackPower) {
+
+}
+
+
+Bomb::~Bomb() {
+    
+}
+
+//ê¹Œì¹˜ ë©”ì„œë“œ êµ¬í˜„ -----------------------------------------------------------------------------
 
 Magpie::Magpie(int x, int y, int speed, double health, int attackPower) :Ally(x, y, speed, health, attackPower) {
-
+    m_output = '*';
 }
 
-bool Magpie::isCollidingSnake(Snake snake) { //±¸··ÀÌ¿ÍÀÇ Ãæµ¹ ¿©ºÎ È®ÀÎ
-	bool is = false; //Ãæµ¹ ¾È ÇÔÀ¸·Î ÃÊ±âÈ­
-
-	// snakeÀÇ ¸ğµç ³ëµå¸¦ µ¹¸ç È®ÀÎÇØ¾ß ÇÔ
-	for (const auto& node : snake.getSnakeList()) {
-		// ¸¸¾à ºÎµúÇûÀ¸¸é true ¹İÈ¯
-		if ((node->sX == this->getX()) && (node->sY == this->getY())) {
-			is = true;
-			break;
-		}
-	}
-
-	return is;
-}
-
-void Magpie::Draw() { //¾ê´Â ¹¹ÇÏ´Â ÇÔ¼öÁö
+void Magpie::Draw() { //ì–˜ëŠ” ë­í•˜ëŠ” í•¨ìˆ˜ì§€
 
 }
 
 void Magpie::GetAttackted(int damage) { 
-	//±îÄ¡ µ¥¹ÌÁö ¹Ş±â -> damage=±¸··ÀÌ attackPower°¡Á®¿À±â
-	double hp = getHealth(); //ÇöÀç ±îÄ¡ÀÇ hp °¡Á®¿À±â
+	//ê¹Œì¹˜ ë°ë¯¸ì§€ ë°›ê¸° -> damage=êµ¬ë ì´ attackPowerê°€ì ¸ì˜¤ê¸°
+	double hp = getHealth(); //í˜„ì¬ ê¹Œì¹˜ì˜ hp ê°€ì ¸ì˜¤ê¸°
 	hp -= damage; 
-	if (hp < 0) //¸¸¾à Á×¾úÀ¸¸é 0À¸·Î ¼³Á¤
+	if (hp < 0) //ë§Œì•½ ì£½ì—ˆìœ¼ë©´ 0ìœ¼ë¡œ ì„¤ì •
 		hp = 0;
-	setHealth(hp); //hp¿¡¼­ damage ¹ŞÀº °ªÀ¸·Î Àç¼³Á¤
+	setHealth(hp); //hpì—ì„œ damage ë°›ì€ ê°’ìœ¼ë¡œ ì¬ì„¤ì •
 }
 
 void Magpie::move(int newX, int newY) {
-	//newX¿Í newY ¹üÀ§ È®ÀÎ
-	if (newX > screenWidth)
-		newX = screenWidth;
-	else if (newX < 0)
-		newX = 0;
-	if (newY > screenHeight)
-		newY = screenHeight;
-	else if (newY < 0)
-		newY = 0;
-
+	//newXì™€ newY ë²”ìœ„ í™•ì¸ì€ ì™¸ë¶€ì—ì„œ í•˜ê³  ë„˜ê¸´ê±° -> ì½”ë“œ ì¤‘ë³µë¨
 	this->setXY(newX, newY);
 }
 
 void Magpie::attackDamage(int attackPower) {
 	
+}
+
+char Magpie::get_output() {
+    return this->m_output;
+}
+
+bool Magpie::isCollidingSnake(Snake* snake) { //êµ¬ë ì´ì™€ì˜ ì¶©ëŒ ì—¬ë¶€ í™•ì¸ => ì´ê±° íŠ¸ë£¨ë©´ magpie.attackedí•¨ìˆ˜ í˜¸ì¶œ
+    bool is = false; //ì¶©ëŒ ì•ˆ í•¨ìœ¼ë¡œ ì´ˆê¸°í™”
+
+    // snakeì˜ ëª¨ë“  ë…¸ë“œë¥¼ ëŒë©° í™•ì¸í•´ì•¼ í•¨
+    for (const auto& node : snake->getSnakeList()) {
+        // ë§Œì•½ ë¶€ë”ªí˜”ìœ¼ë©´ true ë°˜í™˜
+        if ((node->sX == this->getX()) && (node->sY == this->getY())) {
+            is = true;
+            break;
+        }
+    }
+
+    return is;
+}
+
+bool Magpie::isCollidingCreature(Creature* creature) {
+    bool is = false; //ì¶©ëŒ ì•ˆ í•¨ìœ¼ë¡œ ì´ˆê¸°í™”
+
+    if ((this->getX() == creature->getX()) && (this->getY() == creature->getY())) {//ì¶©ëŒì¡°ê±´
+        is = true; 
+        
+        //bellì´ë‘ ë¶€ë”ªí˜”ìœ¼ë©´ bellì˜ isFace ë³€ìˆ˜ ë°”ê¿”ì•¼í•¨
+        Bell* bell = dynamic_cast<Bell*>(creature);
+        if (bell != nullptr) { // Bell ê°ì²´ë¼ë©´
+            bell->setIsFace(!bell->getIsFace()); // setIsFace ë©”ì„œë“œ í˜¸ì¶œ
+        }
+    }
+
+    return is;
+}
+
+
+//ì¢… êµ¬í˜„ë¶€ --------------------------------------------------
+
+Bell::Bell(int x, int y, int speed, double health): bellAndRabbit(x,y,speed,health){
+    b_output = '@';
+}
+
+void Bell::Draw() {
+
+}
+void Bell::GetAttackted(int damage) {
+    //Bellì€ ë°ë¯¸ì§€ ì•ˆ ë°›ìŒ
+}
+void Bell::move(int newX, int newY) {
+    //Bellì˜ ì¢Œí‘œëŠ” ì›€ì§ì´ì§€ ì•ŠìŒ
+}
+void Bell::spawn() {
+    uniform_int_distribution<int> distributionX(0, screenWidth-1);
+    uniform_int_distribution<int> distributionY(0, screenHeight-1);
+ 
+
+    if (this->getIsFace()) { //ë§Œì•½ ê¹Œì¹˜ë¥¼ ë§Œë‚¬ë‹¤ë©´
+        //ì¢…ì„ í•œë²ˆì— í™”ë©´ì— ë¿Œë¦´ê±°ë©´ ì™¸ë¶€ì—ì„œ Bell ê°ì²´ ë°°ì—´ì„ ë§Œë“œëŠ”ê²Œ ë” íš¨ìœ¨ì 
+        //ì¢…ì„ í•˜ë‚˜ ë¨¹ì„ ë•Œë§ˆë‹¤ ëœë¤í•˜ê²Œ ë¿Œë¦´ ê±°ë©´ ì´ ë°©ì‹ìœ¼ë¡œ ì‚¬ìš©
+
+        this->setIsFace(!this->getIsFace()); //ë§Œë‚¬ë˜ ê±° ì•ˆ ë§Œë‚¬ë‹¤ê³  ê°±ì‹ 
+        
+        //ì¢Œí‘œ ê°±ì‹  -> ëœë¤í•˜ê²Œ
+        this->setXY(distributionX(generator), distributionY(generator));
+    }
+}
+
+char Bell::get_output() {
+    return this->b_output;
+}
+
+Bell::~Bell() {
+
 }

@@ -1,32 +1,32 @@
-#pragma once
+ï»¿#pragma once
 
-class Creature // ÃÖ»óÀ§
+class Creature // ìµœìƒìœ„
 {
-private: //ºÎ¸ðÀÇ private ÇÊµå´Â ÀÚ½Ä Å¬·¡½º¿¡¼­ Á¢±Ù ºÒ°¡ -> ¸Þ¼­µå¸¦ ÅëÇØ ¾÷µ¥ÀÌÆ®ÇÏ°í ÃÊ±âÈ­ÇÏ°í ÀÐ¾î¿Í¾ß ÇÔ;;
+private: //ë¶€ëª¨ì˜ private í•„ë“œëŠ” ìžì‹ í´ëž˜ìŠ¤ì—ì„œ ì ‘ê·¼ ë¶ˆê°€ -> ë©”ì„œë“œë¥¼ í†µí•´ ì—…ë°ì´íŠ¸í•˜ê³  ì´ˆê¸°í™”í•˜ê³  ì½ì–´ì™€ì•¼ í•¨;;
 	int pos_x, pos_y;
 	int speed;
 	double health;
 	
 public:
 	Creature(int x, int y, int speed, double health) {
-		//ÀÚ½Ä Å¬·¡½º´Â init ÇÔ¼ö È£Ãâ½Ã ÀÌ°Å ¸ÕÀú È£ÃâÇØ¼­ ÁÂÇ¥ ÇÒ´çÇÏ±â! -> °´ÇÁ¼³¿¡¼­ ¹è¿î °Å´Ï±î ¸ð¸£°Ú´Ù°í ÇÏ¸é ½½ÆÛÀ×
+		//ìžì‹ í´ëž˜ìŠ¤ëŠ” init í•¨ìˆ˜ í˜¸ì¶œì‹œ ì´ê±° ë¨¼ì € í˜¸ì¶œí•´ì„œ ì¢Œí‘œ í• ë‹¹í•˜ê¸°! -> ê°í”„ì„¤ì—ì„œ ë°°ìš´ ê±°ë‹ˆê¹Œ ëª¨ë¥´ê² ë‹¤ê³  í•˜ë©´ ìŠ¬í¼ìž‰
 		pos_x = x;
 		pos_y = y;
 		this->speed = speed;
 		this->health = health;
 	}
-	//setterµé
-	void setXY(int x, int y) { //ÁÂÇ¥ ¾÷µ¥ÀÌÆ® ¸Þ¼­µå
+	//setterë“¤
+	void setXY(int x, int y) { //ì¢Œí‘œ ì—…ë°ì´íŠ¸ ë©”ì„œë“œ
 		pos_x = x;
 		pos_y = y;
 	}
-	void setSpeed(int speed) { //½ºÇÇµå ¾÷µ¥ÀÌÆ® => speed Á¶ÀýÇÏ´Â °´Ã¼ ¾øÀ¸¸é ³ªÁß¿¡ »èÁ¦ÇÕµð´Ù
+	void setSpeed(int speed) { //ìŠ¤í”¼ë“œ ì—…ë°ì´íŠ¸ => speed ì¡°ì ˆí•˜ëŠ” ê°ì²´ ì—†ìœ¼ë©´ ë‚˜ì¤‘ì— ì‚­ì œí•©ë””ë‹¤
 		this->speed = speed;
 	}
-	void setHealth(int health) { //HP ¾÷µ¥ÀÌÆ® ¸Þ¼­µå
+	void setHealth(int health) { //HP ì—…ë°ì´íŠ¸ ë©”ì„œë“œ
 		this->health = health;
 	}
-	//getter -> ÀÏ´Ü health¶û x,y ÇØ³õÀ½
+	//getter -> ì¼ë‹¨ healthëž‘ x,y í•´ë†“ìŒ
 	double getHealth() {
 		return health;
 	}
@@ -43,7 +43,7 @@ public:
 	
 };
 
-//°ÅºÏÀÌ °­¾ÆÁö¶Ë ¹Îµé·¹ ±îÄ¡
+//ê±°ë¶ì´ ê°•ì•„ì§€ë˜¥ ë¯¼ë“¤ë ˆ ê¹Œì¹˜
 class Ally : public Creature
 {
 private:
@@ -54,7 +54,7 @@ public:
 	}
 };
 
-//º´¾Æ¸® Âü»õ ±¸··ÀÌ
+//ë³‘ì•„ë¦¬ ì°¸ìƒˆ êµ¬ë ì´
 class Monster : public Creature
 {
 private:
@@ -68,15 +68,18 @@ public:
 		this->target_y = tY;
 	}
 
-	void setTargetXY(int x, int y) { //Å¸°Ù ÁÂÇ¥ setter
+	void setTargetXY(int x, int y) { //íƒ€ê²Ÿ ì¢Œí‘œ setter
 		this->target_x = x;
 		this->target_y = y;
 	}
-	int getTargetX(int x, int y) { //Å¸°Ù xÁÂÇ¥ getter
+	int getTargetX() { //íƒ€ê²Ÿ xì¢Œí‘œ getter
 		return this->target_x;
 	}
-	int getTargetY(int x, int y) { //Å¸°Ù yÁÂÇ¥ getter
+	int getTargetY() { //íƒ€ê²Ÿ yì¢Œí‘œ getter
 		return this->target_y;
+	}
+	int getAttackPower() {
+		return this->attackPower;
 	}
 
 	virtual void attackDamage(int attackPower)=0;
@@ -84,13 +87,32 @@ public:
 };
 
 
-//Á¾, Åä³¢
+//ì¢…, í† ë¼
 class bellAndRabbit : public Creature
 {
 private:
-	bool isFace = false;
-	int count = 0;
+	bool isFace;
+	int count;
 public:
+    bellAndRabbit(int x, int y, int speed, double health) : Creature(x, y, speed, health) {
+        isFace = false;
+        count = 0;
+    }
+    //setter
+    void setIsFace(bool isFace) {
+        this->isFace = isFace;
+    }
+    void setCount(int count) {
+        this->count = count;
+    }
+    //getter
+    bool getIsFace() {
+        return this->isFace;
+    }
+    int getCount() {
+        return this->count;
+    }
+
 	virtual void spawn() = 0;
-	//¾ê³×´Â ¹«ºê ½º·çÇÏ±â
+	//ì–˜ë„¤ëŠ” ë¬´ë¸Œ ìŠ¤ë£¨í•˜ê¸°
 };
