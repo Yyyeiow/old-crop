@@ -55,12 +55,18 @@ public:
 };
 
 //폭탄
+typedef struct bombAttack {
+	int x;
+	int y;
+}bombAttack;
+
 class Bomb : public Monster  
 {
 private:
 	char bb_output; //이게 출력되면 실제로 데미지 가격
 	char bb_out_prev; //실제로 떨어지기 3프레임 전에 출력할 것
 	int checkCount;
+	bombAttack bombRange[9];
 public:
 	Bomb(int x, int y, int speed, double health, int attackPower, int tX, int tY);
 	~Bomb();
@@ -83,6 +89,9 @@ public:
 		this->checkCount = a;
 	}
 
+	bombAttack* getBombRange() {
+		return bombRange;
+	}
 };
 
 
@@ -118,7 +127,8 @@ public:
 
 	//충돌 여부 확인
 	bool isCollidingSnake(Snake* snake);
-	bool isCollidingCreature(Creature* creature);
+	bool isCollidingBell(Bell* bell);
+	bool isCollidingBomb(Bomb* bomb);
 
     char get_output();
 };

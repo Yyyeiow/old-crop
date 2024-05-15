@@ -111,6 +111,23 @@ Bomb::Bomb(int x, int y, int speed, double health, int attackPower, int tX, int 
     //checkCount가 6이 되는 순간 !을 출력하고 충돌여부 확인 및 어택 
     //checkCount가 0이 되는 순간부터 깜빡거릴거임 -> 0부터 5까지 필요한데 짝수면 출력 홀수면 미출력? 출력
     checkCount = -20; 
+
+    
+
+    int k_y = -1;
+    int k_x = -1;
+    for (int i = 1;i <= 9;i++) {
+
+        bombRange[i - 1].x = x + k_x;
+        bombRange[i - 1].y = y + k_y;
+
+        k_y += 1;
+
+        if (i % 3 == 0) {
+            k_y = -1;
+            k_x += 1;
+        }
+    }
    
 }
 
@@ -125,8 +142,25 @@ void Bomb::GetAttackted(int damage) { //생각해보니 구렁이는 데미지�
 void Bomb::move(int newX, int newY) {
     if (checkCount < 0) { //만약 0보다 작을 경우 까치의 위치값을 가져와서 본인 좌표로 할당한다
         this->setXY(newX, newY);
+
+        int k_y = -1;
+        int k_x = -1;
+        for (int i = 1;i <= 9;i++) {
+
+            bombRange[i - 1].x = newX + k_x;
+            bombRange[i - 1].y = newY + k_y;
+
+            k_y += 1;
+
+            if (i % 3 == 0) {
+                k_y = -1;
+                k_x += 1;
+            }
+        }
     }
+    
 }
+
 
 void Bomb::attackDamage(int attackPower) {
 
@@ -184,16 +218,29 @@ bool Magpie::isCollidingSnake(Snake* snake) { //구렁이와의 충돌 여부 �
     return is;
 }
 
-bool Magpie::isCollidingCreature(Creature* creature) {
+bool Magpie::isCollidingBell(Bell* bell) {
     bool is = false; //충돌 안 함으로 초기화
 
-    if ((this->getX() == creature->getX()) && (this->getY() == creature->getY())) {//충돌조건
+    if ((this->getX() == bell->getX()) && (this->getY() == bell->getY())) {//충돌조건
         is = true; 
-        
-        //bell이랑 부딪혔으면 bell의 isFace 변수 바꿔야함
-        Bell* bell = dynamic_cast<Bell*>(creature);
-        if (bell != nullptr) { // Bell 객체라면
-            bell->setIsFace(!bell->getIsFace()); // setIsFace 메서드 호출
+        bell->setIsFace(!bell->getIsFace()); // setIsFace 메서드 호출
+    }
+
+    return is;
+}
+
+bool Magpie::isCollidingBomb(Bomb* bomb) {
+    bool is = false; //충돌 안 함으로 초기화
+
+    int x = this->getX();
+    int y = this->getY();
+
+    bombAttack* b = bomb->getBombRange();
+    for (int i = 0;i < 9;i++) {
+        // 만약 부딪혔으면 true 반환
+        if ((b[i].x == x) && (b[i].y == y)) {
+            is = true;
+            break;
         }
     }
 

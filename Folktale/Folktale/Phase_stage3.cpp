@@ -157,7 +157,7 @@ void Stage3::Update() {
 
     //3. 충돌 확인
     //3.1 종 개수 확인
-    if (magpie->isCollidingCreature(bell)) {//bell이랑 부딪혔다면
+    if (magpie->isCollidingBell(bell)) {//bell이랑 부딪혔다면
         bell->setCount(bell->getCount() + 1); //count개수 하나 증가
         bell->spawn();//종 위치 갱신
     }
@@ -170,7 +170,7 @@ void Stage3::Update() {
     
     //3.3 폭탄 충돌 확인
     if (bomb->getCheckCount() >= 50 && bomb->getCheckCount() < 70)
-        if(magpie->isCollidingCreature(bomb)) {
+        if(magpie->isCollidingBomb(bomb)) {
             magpie->GetAttackted(bomb->getAttackPower());
     }
 
@@ -239,8 +239,14 @@ void Stage3::Render() {
     }
     //카운트가 100에서 150 사이면 !출력
     else if (b_count >= 50 && b_count < 70) {
-        std::cout << bomb->getOutput();
-        std::cout.flush();
+        bombAttack* b = bomb->getBombRange();
+        for (int i = 0;i < 9;i++) {//데미지 범위 출력
+            cur.X = b[i].x;
+            cur.Y = b[i].y;
+            std::cout << bomb->getOutput();
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
+            std::cout.flush();
+        }
     }
 
     ////3. 기타 텍스트 출력
