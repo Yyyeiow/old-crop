@@ -1,20 +1,19 @@
 ﻿#pragma once
 #include "Creature.h"
 #include <list>
-#include <iostream>
-#include <SDL.h>
 #include <random>
+#include <iostream>
 #define SNAKESIZE 15
+#define GRID 30
 
 using namespace std;
 
 //ui 적용 시 값 얻어와서 할당하기
 //여기서 정의한 전역 변수는 phase_stage3, main에서 사용 가능
-enum DIRECTION { LEFT, RIGHT, UP, DOWN };
+enum DIRECTION { LEFT, RIGHT, UP, DOWN, STOP };
 
-const int screenWidth = 30;
-const int screenHeight = 15;
-
+extern int screenWidth;
+extern int screenHeight;
 
 
 //일단 각 객체별 output 설정
@@ -27,7 +26,7 @@ const int screenHeight = 15;
 typedef struct Node {
 	//x좌표 y좌표
 	int sX, sY;
-    char s_output;
+	int dircetion;
 }Node;
 
 
@@ -38,6 +37,8 @@ private:
 	//구렁이 좌표를 저장하고 업데이트 할 연결리스트
 	list<Node*> snakeList;
     DIRECTION dSnake;
+	int moveCounter;
+
 public:
 	Snake(int x, int y, int speed, double health, int attackPower, int tX, int tY);
 	~Snake();
@@ -48,8 +49,11 @@ public:
 	bool isNodeInList(int x, int y);
 
 	//getter setter
-	list<Node*> getSnakeList() const {
+	list<Node*> getSnakeList() {
 		return snakeList;
+	}
+	DIRECTION getSnakeDirection() {
+		return dSnake;
 	}
 
 };

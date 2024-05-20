@@ -7,8 +7,10 @@ extern default_random_engine generator;
 Stage3::Stage3() {
     //1. 객체 생성
     //a. 종 생성
-    uniform_int_distribution<int> distributionX(0, screenWidth);
-    uniform_int_distribution<int> distributionY(0, screenHeight);
+    uniform_int_distribution<int> distributionX(0, screenWidth/GRID-1);
+    uniform_int_distribution<int> distributionY(0, screenHeight/GRID-1);
+
+
     bell = new Bell(distributionX(generator), distributionY(generator), 0, 0);
     //b. 까치 생성
     magpie = new Magpie(0, 0, 1, 100,0); //(0,0)에서 시작, speed는 1,hp는 100으로 설정
@@ -17,8 +19,73 @@ Stage3::Stage3() {
     //d. 폭탄 생성
     bomb = new Bomb(0, 0, 1, 100, 5, magpie->getX(), magpie->getY());
 
+    ////2. 텍스쳐 가져오기
+    //a. 종 텍스쳐
+    SDL_Surface* temp_sheet_surface = IMG_Load("../../Resource/background.png");
+    std::cout << "종 이미지 로드" << std::endl;
+    bell_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
+    SDL_FreeSurface(temp_sheet_surface);//해제 필수
+    bell_destination_rect.x = bell->getX();
+    bell_destination_rect.y = bell->getY();
+    bell_destination_rect.w = GRID;
+    bell_destination_rect.h = GRID;
+
+    //b. 까치 텍스쳐
+    temp_sheet_surface = IMG_Load("../../Resource/magpie.png");
+    std::cout << "까치 이미지 로드" << std::endl;
+    magpie_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
+    SDL_FreeSurface(temp_sheet_surface);//해제 필수
+    magpie_destination_rect.x = magpie->getX()*GRID;
+    magpie_destination_rect.y = magpie->getY()*GRID;
+    magpie_destination_rect.w = GRID;
+    magpie_destination_rect.h = GRID;
+
+    
+    //c. 구렁이 텍스쳐
+    temp_sheet_surface = IMG_Load("../../Resource/snakeHead.png");
+    std::cout << "snakeHead 이미지 로드" << std::endl;
+    snakeHead_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
+    SDL_FreeSurface(temp_sheet_surface);//해제 필수
+    snake_destination_rect.x = snake->getSnakeList().front()->sX;
+    snake_destination_rect.y = snake->getSnakeList().front()->sY;
+    snake_destination_rect.w = GRID;
+    snake_destination_rect.h = GRID;
+
+    temp_sheet_surface = IMG_Load("../../Resource/snakeBody.png");
+    std::cout << "snake 이미지 로드" << std::endl;
+    snakeBody_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
+    SDL_FreeSurface(temp_sheet_surface);//해제 필수
+    temp_sheet_surface = IMG_Load("../../Resource/snakeTail.png");
+    std::cout << "snake 이미지 로드" << std::endl;
+    snakeTail_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
+    SDL_FreeSurface(temp_sheet_surface);//해제 필수
+
+    temp_sheet_surface = IMG_Load("../../Resource/snake.png");
+    std::cout << "snake 이미지 로드" << std::endl;
+    snake_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
+
+    
+
+    //d. 배경 텍스쳐
+    temp_sheet_surface = IMG_Load("../../Resource/background.png");
+    std::cout << "배경 이미지 로드" << std::endl;
+    bg_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
+    SDL_FreeSurface(temp_sheet_surface);//해제 필수
+    bg_destination_rect.x = 0;
+    bg_destination_rect.y = 0;
+    bg_destination_rect.w = screenWidth;
+    bg_destination_rect.h = screenHeight;
+
+    //하트 텍스처
+    temp_sheet_surface = IMG_Load("../../Resource/background.png");
+    std::cout << "배경 이미지 로드" << std::endl;
+    heartZero_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
+    SDL_FreeSurface(temp_sheet_surface);//해제 필수
+    heart_destination_rect.w = GRID;
+    heart_destination_rect.h = GRID;
+
     //2. 기타 세팅
-    f_state = -1;//방향키 안 누름
+    f_state = STOP;//방향키 안 누름
     stop = true; //정지 상황으로 초기화
     //모두 안 눌린 것으로 초기화 -> stop
     for (int i = 0; i < f_state; i++) {//0은 좌측, ...
@@ -26,11 +93,7 @@ Stage3::Stage3() {
     }
     game_result = 0;//1-> 승리, 2-> 패배
 
-    // std::cout 출력에 버퍼를 사용하여, 출력 속도가 느려지는 현상을 피한다.
-    setvbuf(stdout, NULL, _IOLBF, 4096);
-    // Clear the console screen.
-    // 표준출력 화면을 깨끗히 지운다.
-    system("cls");
+    
 }
 
 
@@ -47,25 +110,25 @@ void Stage3::HandleEvents() {
         case SDL_KEYDOWN:
 
             if (event.key.keysym.sym == SDLK_LEFT) {
-                f_state = 0; //현재 눌린 값이 LEFT
+                f_state = LEFT; //현재 눌린 값이 LEFT
                 f_list[f_state] = true;
                 stop = false;
 
             }
             else if (event.key.keysym.sym == SDLK_RIGHT) {
-                f_state = 1;
+                f_state = RIGHT;
                 f_list[f_state] = true;
                 stop = false;
 
             }
             else if (event.key.keysym.sym == SDLK_UP) {
-                f_state = 2;
+                f_state =UP;
                 f_list[f_state] = true;
                 stop = false;
 
             }
             else if (event.key.keysym.sym == SDLK_DOWN) {
-                f_state = 3;
+                f_state = DOWN;
                 f_list[f_state] = true;
                 stop = false;
 
@@ -130,14 +193,14 @@ void Stage3::Update() {
     }
 
     //1.2 까치 좌표 범위
-    if (x > screenWidth-1) { 
-        x = screenWidth-1;
+    if (x > screenWidth/GRID-1) { 
+        x = screenWidth / GRID - 1;
     }
     else if (x < 0) {
         x = 0;
     }
-    if (y > screenHeight-1) {
-        y = screenHeight-1;
+    if (y > screenHeight/ GRID - 1) {
+        y = screenHeight / GRID - 1;
     }
     else if (y < 0) {
         y = 0;
@@ -187,85 +250,104 @@ void Stage3::Render() {
 
     //// 1. 배경 그리기.
     // 1.1. 커서를 콘솔 화면의 왼쪽 위 모서리 부분으로 옮긴다. 좌표(0, 0)
-    // <windows.h>에서 제공하는 함수를 사용한다.
-    COORD cur;
-    cur.X = 0;
-    cur.Y = 0;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
-
-    //// 1.2. 배경 부분을 '.'으로 채운다.
-    for (int i = 0; i <  screenHeight; i++) { // -> 이거 지금 숫자 바꾸면 덮어쓰기가 안되는 오류 발생
-        for (int j = 0; j < screenWidth; j++) {
-            std::cout << ".";
-        }
-        std::cout << std::endl;
-    }
+    // <windows.h>에서 제공하는 함수를 사용한다
+    //// 1.2. 배경 그리기
+    SDL_RenderCopy(g_renderer, bg_texture, NULL, &bg_destination_rect);
 
 
     //// 2. 캐릭터 그리기.
     // 종 그리기
-    cur.X = bell->getX();
-    cur.Y = bell->getY();
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
-    std::cout << bell->get_output();
-    std::cout.flush();
+    bell_destination_rect.x = bell->getX()*GRID; //그려질 좌표 지정
+    bell_destination_rect.y = bell->getY()*GRID;
+    SDL_RenderCopy(g_renderer, bell_texture, NULL, &bell_destination_rect);
+    
 
     // 까치 그리기
-    cur.X = magpie->getX();
-    cur.Y = magpie->getY();
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
-    std::cout << magpie->get_output();
-    std::cout.flush();
+    magpie_destination_rect.x = magpie->getX()*GRID; //그려질 좌표 지정
+    magpie_destination_rect.y = magpie->getY()*GRID;
+    SDL_RenderCopy(g_renderer, magpie_texture, NULL, &magpie_destination_rect);
 
     // 구렁이 그리기
-    for (const auto& node : snake->getSnakeList()) {
-        cur.X = node->sX;
-        cur.Y = node->sY;
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
-        std::cout << node->s_output;
-        std::cout.flush();
+    auto snakeList = snake->getSnakeList();
+    for (auto it = snakeList.begin(); it != snakeList.end(); ++it) {
+        snake_destination_rect.x = (*it)->sX*GRID; // 그려질 좌표 지정
+        snake_destination_rect.y = (*it)->sY*GRID;
+        //각도 설정
+        int angle=0;
+        switch ((*it)->dircetion) {
+        case LEFT://좌
+            angle = -90;
+            break;
+        case RIGHT://우
+            angle = 90;
+            break;
+        case UP://위
+            angle = -0;
+
+            break;
+        case DOWN://아래
+            angle = 180;
+            
+            break;
+        default:
+            break;
+        }
+
+        // 뱀의 헤드 노드인 경우에는 헤드 이미지를 사용하고, 그렇지 않은 경우에는 기존의 뱀 이미지를 사용합니다.
+        if (it == snakeList.begin()) {
+            SDL_RenderCopyEx(g_renderer, snakeHead_texture, NULL, &snake_destination_rect, angle, NULL, SDL_FLIP_NONE);
+        }
+        else if (it == snakeList.end()) {
+            SDL_RenderCopyEx(g_renderer, snakeTail_texture, NULL, &snake_destination_rect, angle, NULL, SDL_FLIP_NONE);
+
+        }
+        else {
+            SDL_RenderCopyEx(g_renderer, snakeBody_texture, NULL, &snake_destination_rect, angle,NULL, SDL_FLIP_NONE);
+        }
     }
+    
     // 폭탄 그리기
     int b_count = bomb->getCheckCount();
-    cur.X = bomb->getX();
-    cur.Y = bomb->getY();
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
     //카운트가 6보다 작고 0 이상인데 짝수면 ? 출력
     if (b_count < 50 && b_count >= 0) {
         if (b_count % 2 == 0) {
             std::cout << bomb->getOutputPrev();
-            std::cout.flush();
+            SDL_RenderCopy(g_renderer, heartZero_texture, NULL, &heart_destination_rect);
         }
     }
     //카운트가 100에서 150 사이면 !출력
     else if (b_count >= 50 && b_count < 70) {
         bombAttack* b = bomb->getBombRange();
         for (int i = 0;i < 9;i++) {//데미지 범위 출력
-            cur.X = b[i].x;
-            cur.Y = b[i].y;
-            std::cout << bomb->getOutput();
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
-            std::cout.flush();
+            if (b[i].x >= screenWidth || b[i].x<0 || b[i].y >= screenHeight || b[i].y <0)
+                continue;
+            heart_destination_rect.x = b[i].x;
+            heart_destination_rect.y = b[i].y;
+            SDL_RenderCopy(g_renderer, heartOne_texture, NULL, &heart_destination_rect);
         }
     }
+    //하트 출력
+
+
 
     ////3. 기타 텍스트 출력
     //3.1 까치 hp 출력
-    cur.X = screenWidth+10;
+
+    /*cur.X = screenWidth+10;
     cur.Y = 0;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
     std::cout << "HP : " << setw(5) <<magpie->getHealth();
-    std::cout.flush();
+    std::cout.flush();*/
 
     //3.2 현재 울린 종 개수 출력
-    cur.X = screenWidth + 10;
+    /*cur.X = screenWidth + 10;
     cur.Y = 1;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
     std::cout << "종 : " << setw(5) <<bell->getCount();
-    std::cout.flush();
+    std::cout.flush();*/
     
     //3.3 게임 승패 확인 및 출력
-    cur.X = screenWidth + 10;
+   /* cur.X = screenWidth + 10;
     cur.Y = 5;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
     if (game_result == 1) {
@@ -275,11 +357,11 @@ void Stage3::Render() {
     else if (game_result == 2) {
         std::cout << "---패배---";
         std::cout.flush();
-    }
+    }*/
 
     //// 3. 프레임 완성.
     // std::cout으로 출력한 내용 중, 아직 화면에 표시되 않고 버퍼에 남아 있는 것이 있다면, 모두 화면에 출력되도록 한다.
-    std::cout.flush();
+    SDL_RenderPresent(g_renderer);
     
 }
 void Stage3::Reset() {
@@ -288,6 +370,16 @@ void Stage3::Reset() {
 
 
 Stage3::~Stage3() {
+    //이미지 텍스쳐 해제
+    SDL_DestroyTexture(snakeHead_texture);
+    SDL_DestroyTexture(snakeBody_texture);
+    SDL_DestroyTexture(snakeTail_texture);
+    SDL_DestroyTexture(bg_texture);
+    SDL_DestroyTexture(bell_texture);
+    SDL_DestroyTexture(magpie_texture);
+
+
+    //객체 해제
     delete bell;
     delete magpie;
     delete snake;

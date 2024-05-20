@@ -7,16 +7,19 @@ Snake::Snake(int x, int y, int speed, double health, int attackPower, int tX, in
 	//구렁이 좌표 초기값 설정 
 	//구렁이의 길이는 일단 10개로 지정
     //처음 구렁이는 화면의 중앙에 위치
-	int centerX = screenWidth / 2;
-	int centerY = screenHeight / 2;
-	for (int i = 0;i < SNAKESIZE;i++) {
+	int centerX = (screenWidth / GRID)/2-1;
+	int centerY = (screenHeight / GRID)/2;
+	for (int i = 0;i < SNAKESIZE-1;i++) {
 		Node* n = new Node;
 		n->sX=i + centerX;
 		n->sY = centerY;
-        n->s_output ='#';
+        n->dircetion = LEFT;
 		snakeList.push_back(n);
 	}
     dSnake = LEFT; //구렁이 처음 헤드 방향을 LEFT로 설정
+
+    moveCounter = 0;
+
 }
 
 void Snake::Draw() { //얘는 뭐하는 함수지
@@ -40,48 +43,63 @@ void Snake::move(int newX, int newY) { //newX와 newY는 사용하지 않음
     //snake는 랜덤하게 움직임 => 이 함수 안에서 좌표 갱신되도록 수정하기
     //좌, 우, 위, 아래 중 하나가 랜덤하게 결정
     //switch문으로 좌표 갱신
+    moveCounter++;
+    if (moveCounter < 5) { // 5번의 게임 루프마다 한 번씩 움직이도록 변경
+        return;
+    }
+    moveCounter = 0; // 카운터 초기화
+
     uniform_int_distribution<int> d(0, 3);
     
     //새 좌표 노드
     Node* head = new Node;
-    head->s_output = '#';
+   
    
 
     //새 좌표 계산
-    int newHeadX = snakeList.front()->sX;
-    int newHeadY = snakeList.front()->sY;
+    int newHeadX;
+    int newHeadY;
 
+    int sx= snakeList.front()->sX;
+    int sy= snakeList.front()->sY;
+    //int newHeadX = snakeList.front()->sX;
+    //int newHeadY = snakeList.front()->sY;
 
-    do{ //지금 front에 있는 좌표랑 일치하지 않을 때까지 좌표값 할당 반복
+    do { //지금 front에 있는 좌표랑 일치하지 않을 때까지 좌표값 할당 반복
         int direction = d(generator);
+        newHeadX = sx;
+        newHeadY = sy;
         switch (direction) {
         case LEFT:
             dSnake = LEFT;
             //x좌표
-            newHeadX--;
+            newHeadX -= 1;
             break;
         case RIGHT:
             dSnake = RIGHT;
-            newHeadX++;
+            newHeadX += 1;
             break;
         case UP:
             dSnake = UP;
-            newHeadY--;
+            newHeadY -= 1;
             break;
         case DOWN:
             dSnake = DOWN;
-            newHeadY++;
+            newHeadY += 1;
             break;
         default:
             break;
         }
-    } while (isNodeInList(newHeadX, newHeadY) //겹치면 루프 반복
-        || newHeadX < 0 || newHeadX >= screenWidth //맵 너비 검증
-        || newHeadY < 0 || newHeadY >= screenHeight);//맵 높이 검증
+    }while(newHeadX < 0 || newHeadX >= screenWidth / GRID //맵 너비 검증
+            || newHeadY < 0 || newHeadY >= screenHeight/GRID);//맵 높이 검증)
+    //} while (isNodeInList(newHeadX, newHeadY) //겹치면 루프 반복
+    //    || newHeadX < 0 || newHeadX >= screenWidth/GRID //맵 너비 검증
+    //    || newHeadY < 0 || newHeadY >= screenHeight/GRID);//맵 높이 검증
 
 	//front에 새 노드 추가;
     head->sX = newHeadX;
     head->sY = newHeadY;
+    head->dircetion = dSnake;
 	snakeList.push_front(head);
 	//back에서 노드 제거
 	Node* tail = snakeList.back();
@@ -138,6 +156,7 @@ void Bomb::Draw() { //얘는 뭐하는 함수지
 void Bomb::GetAttackted(int damage) { //생각해보니 구렁이는 데미지를 안 받음
 
 }
+
 
 void Bomb::move(int newX, int newY) {
     if (checkCount < 0) { //만약 0보다 작을 경우 까치의 위치값을 가져와서 본인 좌표로 할당한다
@@ -264,10 +283,9 @@ void Bell::move(int newX, int newY) {
     //Bell의 좌표는 움직이지 않음
 }
 void Bell::spawn() {
-    uniform_int_distribution<int> distributionX(0, screenWidth-1);
-    uniform_int_distribution<int> distributionY(0, screenHeight-1);
+    uniform_int_distribution<int> distributionX(0, screenWidth/GRID-1);
+    uniform_int_distribution<int> distributionY(0, screenHeight/GRID-1);
  
-
     if (this->getIsFace()) { //만약 까치를 만났다면
         //종을 한번에 화면에 뿌릴거면 외부에서 Bell 객체 배열을 만드는게 더 효율적
         //종을 하나 먹을 때마다 랜덤하게 뿌릴 거면 이 방식으로 사용
