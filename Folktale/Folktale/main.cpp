@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 {
     SDL_Init(SDL_INIT_EVERYTHING);
     // Initializing SDL library
-    g_window = SDL_CreateWindow("STAGE3", 100, 100, 800, 830, 0);
+    g_window = SDL_CreateWindow("STAGE3", 100, 100, 1080, 720, 0);
     g_renderer = SDL_CreateRenderer(g_window, -1, 0);
     SDL_GetWindowSize(g_window, &screenWidth, &screenHeight);//크기 지정
 

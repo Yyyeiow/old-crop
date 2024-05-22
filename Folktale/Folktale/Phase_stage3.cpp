@@ -68,7 +68,7 @@ Stage3::Stage3() {
     bg_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
     SDL_FreeSurface(temp_sheet_surface);//해제 필수
     bg_destination_rect.x = 0;
-    bg_destination_rect.y = GRID;
+    bg_destination_rect.y = 0;
     bg_destination_rect.w = screenWidth;
     bg_destination_rect.h = screenHeight;
 
@@ -396,8 +396,8 @@ void Stage3::Render() {
 
     //하트 출력
 
-    heart_destination_rect.w = GRID-10;
-    heart_destination_rect.h = GRID-10;
+    heart_destination_rect.w = GRID-15;
+    heart_destination_rect.h = GRID-15;
     int hp = (int)magpie->getHealth();
 
     // 까치 렌더링
