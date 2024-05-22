@@ -1,4 +1,4 @@
-ï»¿#include<iostream>
+#include<iostream>
 #include "Phase_stage3.h"
 
 /////////////////////////////////////////////////
@@ -13,14 +13,17 @@ int main(int argc, char* argv[])
 {
     SDL_Init(SDL_INIT_EVERYTHING);
     // Initializing SDL library
-    g_window = SDL_CreateWindow("STAGE3", 100, 100, 600, 600, 0);
+    g_window = SDL_CreateWindow("STAGE3", 100, 100, 800, 830, 0);
     g_renderer = SDL_CreateRenderer(g_window, -1, 0);
-    SDL_GetWindowSize(g_window, &screenWidth, &screenHeight);//í¬ê¸° ì§€ì •
+    SDL_GetWindowSize(g_window, &screenWidth, &screenHeight);//Å©±â ÁöÁ¤
 
+    SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, 255);
+    // À©µµ¿ì¸¦ µå·Î¿ì »ö»óÀ¸·Î Ã¤¿ó´Ï´Ù.
+    //SDL_RenderClear(g_renderer);
 
     g_flag_running = true;
 
-    //stageê°ì²´ ìƒì„±
+    //stage°´Ã¼ »ı¼º
     Stage3* stage3=new Stage3();
 
     g_last_time_ms = SDL_GetTicks();
@@ -32,7 +35,7 @@ int main(int argc, char* argv[])
         if (cur_time_ms - g_last_time_ms < 50)
             continue;
 
-        if (stage3->getResult() == 1|| stage3->getResult() == 2) { //ìŠ¹ë¦¬ë¡œ ê²Œì„ ëë‚¨
+        if (stage3->getResult() == 1|| stage3->getResult() == 2) { //½Â¸®·Î °ÔÀÓ ³¡³²
             g_flag_running = false;
         }
 
@@ -41,6 +44,7 @@ int main(int argc, char* argv[])
         stage3->Render();
 
         g_last_time_ms = cur_time_ms;
+        //SDL_Delay(100);
     }
 
     delete stage3;

@@ -1,7 +1,5 @@
 #pragma once
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+
 #include "Creature_stage3.h"
 
 extern bool g_flag_running;
@@ -25,6 +23,8 @@ private:
 
 	//승패 확인 변수
 	int game_result;
+
+	SDL_RendererFlip flip;
 
 public:
 	Stage3();
@@ -51,11 +51,16 @@ private:
 	SDL_Texture* snakeHead_texture; // the SDL_Texture 
 	SDL_Texture* snakeBody_texture;
 	SDL_Texture* snakeTail_texture;
+	SDL_Texture* snakeCurve_texture;
 	SDL_Rect snake_destination_rect; // for destination
 
 	//배경 텍스쳐
 	SDL_Texture* bg_texture; // the SDL_Texture 
 	SDL_Rect bg_destination_rect; // for destination
+
+	//폭탄 텍스쳐
+	SDL_Texture* bombPrev_texture;
+	SDL_Texture* bombAfter_texture;
 
 	//하트 텍스쳐
 	SDL_Texture* heartZero_texture; // the SDL_Texture 

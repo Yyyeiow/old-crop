@@ -1,40 +1,37 @@
-ï»¿#pragma once
+#pragma once
 #include "Creature.h"
 #include <list>
 #include <random>
 #include <iostream>
-#define SNAKESIZE 15
-#define GRID 30
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#define SNAKESIZE 8
+#define GRID 40
 
 using namespace std;
 
-//ui ì ìš© ì‹œ ê°’ ì–»ì–´ì™€ì„œ í• ë‹¹í•˜ê¸°
-//ì—¬ê¸°ì„œ ì •ì˜í•œ ì „ì—­ ë³€ìˆ˜ëŠ” phase_stage3, mainì—ì„œ ì‚¬ìš© ê°€ëŠ¥
+//ui Àû¿ë ½Ã °ª ¾ò¾î¿Í¼­ ÇÒ´çÇÏ±â
+//¿©±â¼­ Á¤ÀÇÇÑ Àü¿ª º¯¼ö´Â phase_stage3, main¿¡¼­ »ç¿ë °¡´É
 enum DIRECTION { LEFT, RIGHT, UP, DOWN, STOP };
 
 extern int screenWidth;
 extern int screenHeight;
 
 
-//ì¼ë‹¨ ê° ê°ì²´ë³„ output ì„¤ì •
-//êµ¬ë ì´ -> #
-//ê¹Œì¹˜ -> *
-//ì¢… -> @
-
-
-//êµ¬ë ì´ ì—°ê²°ë¦¬ìŠ¤íŠ¸ ë…¸ë“œ
+//±¸··ÀÌ ¿¬°á¸®½ºÆ® ³ëµå
 typedef struct Node {
-	//xì¢Œí‘œ yì¢Œí‘œ
+	//xÁÂÇ¥ yÁÂÇ¥
 	int sX, sY;
 	int dircetion;
 }Node;
 
 
-//êµ¬ë ì´
-class Snake : public Monster  //êµ¬ë ì´
+//±¸··ÀÌ
+class Snake : public Monster  //±¸··ÀÌ
 {
 private:
-	//êµ¬ë ì´ ì¢Œí‘œë¥¼ ì €ì¥í•˜ê³  ì—…ë°ì´íŠ¸ í•  ì—°ê²°ë¦¬ìŠ¤íŠ¸
+	//±¸··ÀÌ ÁÂÇ¥¸¦ ÀúÀåÇÏ°í ¾÷µ¥ÀÌÆ® ÇÒ ¿¬°á¸®½ºÆ®
 	list<Node*> snakeList;
     DIRECTION dSnake;
 	int moveCounter;
@@ -58,7 +55,7 @@ public:
 
 };
 
-//í­íƒ„
+//ÆøÅº
 typedef struct bombAttack {
 	int x;
 	int y;
@@ -67,8 +64,6 @@ typedef struct bombAttack {
 class Bomb : public Monster  
 {
 private:
-	char bb_output; //ì´ê²Œ ì¶œë ¥ë˜ë©´ ì‹¤ì œë¡œ ë°ë¯¸ì§€ ê°€ê²©
-	char bb_out_prev; //ì‹¤ì œë¡œ ë–¨ì–´ì§€ê¸° 3í”„ë ˆì„ ì „ì— ì¶œë ¥í•  ê²ƒ
 	int checkCount;
 	bombAttack bombRange[9];
 public:
@@ -80,12 +75,6 @@ public:
 	virtual void attackDamage(int attackPower);
 
 	//getter setter
-	char getOutputPrev() {
-		return bb_out_prev;
-	}
-	char getOutput() {
-		return bb_output;
-	}
 	int getCheckCount() {
 		return checkCount;
 	}
@@ -100,12 +89,11 @@ public:
 
 
 
-//ì¢…
+//Á¾
 class Bell : public bellAndRabbit
 {
 private:
-    //ë¶€ëª¨ ê°ì²´ì— ìˆëŠ” í•„ë“œë§Œìœ¼ë¡œ ì‚¬ìš©
-    char b_output;
+    //ºÎ¸ğ °´Ã¼¿¡ ÀÖ´Â ÇÊµå¸¸À¸·Î »ç¿ë
 public:
     Bell(int x, int y, int speed, double health);
     ~Bell();
@@ -114,14 +102,18 @@ public:
     virtual void GetAttackted(int damage);
     virtual void move(int newX, int newY);
     virtual void spawn();
-    char get_output();
+  
 };
 
-//ê¹Œì¹˜
+//±îÄ¡
 class Magpie : public Ally
 {
 private:
-    char m_output;
+	int moveCounter;
+	bool invincible;
+	int lastDamageTime;
+	int countBell;
+
 public:
 	Magpie(int x, int y, int speed, double health, int attackPower);
 	virtual void Draw();
@@ -129,12 +121,30 @@ public:
 	virtual void move(int newX, int newY);
 	virtual void attackDamage(int attackPower);
 
-	//ì¶©ëŒ ì—¬ë¶€ í™•ì¸
+	//Ãæµ¹ ¿©ºÎ È®ÀÎ
 	bool isCollidingSnake(Snake* snake);
 	bool isCollidingBell(Bell* bell);
 	bool isCollidingBomb(Bomb* bomb);
 
-    char get_output();
+	bool getInvincible() {
+		return invincible;
+	}
+	int getLastDamageTime() {
+		return lastDamageTime;
+	}
+	int getCountBell() {
+		return countBell;
+	}
+
+	void setInvincible(bool is) {
+		invincible = is;
+	}
+
+	void setCountBell(int count) {
+		countBell = count;
+	}
+
+  
 };
 
 
