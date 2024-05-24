@@ -44,7 +44,7 @@ void Snake::move(int magpieX, int magpieY) { //newX와 newY는 사용하지 않음
     //좌, 우, 위, 아래 중 하나가 랜덤하게 결정
     //switch문으로 좌표 갱신
     moveCounter++;
-    if (moveCounter < 5) { // 5번의 게임 루프마다 한 번씩 움직이도록 변경
+    if (moveCounter < 8) { // 5번의 게임 루프마다 한 번씩 움직이도록 변경
         return;
     }
     moveCounter = 0; // 카운터 초기화
@@ -91,7 +91,7 @@ void Snake::move(int magpieX, int magpieY) { //newX와 newY는 사용하지 않음
         else {
             newHeadY = sy;
             newHeadX = (newHeadX + 1) % (screenWidth / GRID);
-            dSnake = (dSnake == UP) ? RIGHT : UP; // 방향 변경
+            dSnake = (dSnake == UP) ? RIGHT : LEFT; // 방향 변경
         }
     }
 
@@ -222,7 +222,7 @@ void Magpie::move(int newX, int newY) {
     static int moveCounter = 0;
     moveCounter++;
 
-    if (moveCounter % 3 == 0) { // 5번의 호출마다 한 번씩 이동
+    if (moveCounter % 5 == 0) { // 5번의 호출마다 한 번씩 이동
         this->setXY(newX, newY);
     }
 	

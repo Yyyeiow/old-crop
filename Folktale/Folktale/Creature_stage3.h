@@ -6,7 +6,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#define SNAKESIZE 8
+#define SNAKESIZE 15
 #define GRID 40
 
 using namespace std;

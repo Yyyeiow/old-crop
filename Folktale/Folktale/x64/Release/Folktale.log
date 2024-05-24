@@ -1,8 +1,8 @@
 ﻿  Phase_stage3.cpp
 C:\Users\gylee\Documents\old-crop\Folktale\Folktale\Phase_stage3.cpp(16,31): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   코드를 생성하고 있습니다.
-  1 of 198 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
+  2 of 200 functions ( 1.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   Folktale.vcxproj -> C:\Users\gylee\Documents\old-crop\Folktale\x64\Release\Folktale.exe

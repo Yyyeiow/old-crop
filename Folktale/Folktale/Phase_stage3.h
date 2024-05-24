@@ -47,11 +47,9 @@ private:
 	SDL_Texture* magpie_texture; // the SDL_Texture 
 	SDL_Rect magpie_destination_rect; // for destination
 	//구렁이 텍스쳐
-	///헤드
 	SDL_Texture* snakeHead_texture; // the SDL_Texture 
 	SDL_Texture* snakeBody_texture;
 	SDL_Texture* snakeTail_texture;
-	SDL_Texture* snakeCurve_texture;
 	SDL_Rect snake_destination_rect; // for destination
 
 	//배경 텍스쳐
@@ -61,6 +59,8 @@ private:
 	//폭탄 텍스쳐
 	SDL_Texture* bombPrev_texture;
 	SDL_Texture* bombAfter_texture;
+	SDL_Rect bomb_source_rect; // for destination
+	SDL_Rect bomb_destination_rect;
 
 	//하트 텍스쳐
 	SDL_Texture* heartZero_texture; // the SDL_Texture 

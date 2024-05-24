@@ -13,7 +13,7 @@ Stage3::Stage3() {
 
     bell = new Bell(distributionX(generator), distributionY(generator), 0, 0);
     //b. 까치 생성
-    magpie = new Magpie(0, 0, 0.5, 50,0); //(0,0)에서 시작, speed는 1,hp는 100으로 설정
+    magpie = new Magpie(3, 3, 0.5, 50,0); //(0,0)에서 시작, speed는 1,hp는 100으로 설정
     //c. 구렁이 생성
     snake = new Snake(0, 0, 1, 100, 10, magpie->getX(),magpie->getY());
     //d. 폭탄 생성
@@ -45,8 +45,8 @@ Stage3::Stage3() {
     SDL_FreeSurface(temp_sheet_surface);//해제 필수
     snake_destination_rect.x = snake->getSnakeList().front()->sX;
     snake_destination_rect.y = snake->getSnakeList().front()->sY;
-    snake_destination_rect.w = GRID;
-    snake_destination_rect.h = GRID;
+    snake_destination_rect.w = GRID-10;
+    snake_destination_rect.h = GRID-10;
 
     temp_sheet_surface = IMG_Load("../../Resource/snakeBody.png");
     snakeBody_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
@@ -55,13 +55,18 @@ Stage3::Stage3() {
     snakeTail_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
     SDL_FreeSurface(temp_sheet_surface);//해제 필수
 
-    temp_sheet_surface = IMG_Load("../../Resource/snakeCurve.png");
-    snakeCurve_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-
+   
     //폭탄 텍스쳐 
     temp_sheet_surface  = IMG_Load("../../Resource/bombAfter.png");
     bombAfter_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
     SDL_FreeSurface(temp_sheet_surface);//해제 필수
+    bomb_source_rect.x = 0;
+    bomb_source_rect.y = 0;
+    bomb_source_rect.w = 32;
+    bomb_source_rect.h = 32;
+    
+    bomb_destination_rect.w = GRID*3;
+    bomb_destination_rect.h = GRID*3;
 
     //d. 배경 텍스쳐
     temp_sheet_surface = IMG_Load("../../Resource/background.png");
@@ -215,7 +220,7 @@ void Stage3::Update() {
     //1.3 까치 이동
     magpie->move(x, y);   
     //1.4 까치 무적 시간 업데이트
-    if (magpie->getInvincible() && SDL_GetTicks() - magpie->getLastDamageTime() >= 3000) {
+    if (magpie->getInvincible() && SDL_GetTicks() - magpie->getLastDamageTime() >= 2000) {
         magpie->setInvincible(false);
     }
     
@@ -224,7 +229,7 @@ void Stage3::Update() {
     snake->move(magpie->getX(), magpie->getY());
 
     //3. 폭탄 업데이트
-    if(bomb->getCheckCount()>=70)
+    if(bomb->getCheckCount()>=75)
         bomb->setCheckCount(-20); //재설정
     bomb->setCheckCount(bomb->getCheckCount() + 1); //카운트 개수 증가
     bomb->move(magpie->getX(), magpie->getY()); //타겟 좌표 변경 -> 0 이하일 때만 값 변경됨
@@ -246,7 +251,7 @@ void Stage3::Update() {
     
 
     //3.3 폭탄 충돌 확인
-    if (bomb->getCheckCount() >= 50 && bomb->getCheckCount() < 70){
+    if (bomb->getCheckCount() >= 50 && bomb->getCheckCount() < 75){
         if (magpie->isCollidingBomb(bomb)) {
             magpie->GetAttackted(bomb->getAttackPower());
             cout << magpie->getHealth() << endl;
@@ -269,8 +274,21 @@ void Stage3::Render() {
     //// 1. 배경 그리기.
     // 1.1. 커서를 콘솔 화면의 왼쪽 위 모서리 부분으로 옮긴다. 좌표(0, 0)
     // <windows.h>에서 제공하는 함수를 사용한다
+    
     //// 1.2. 배경 그리기
-    SDL_RenderClear(g_renderer); //검정으로 초기화
+   
+    int time = SDL_GetTicks();
+    int r = 0, g = 0, b = 0;
+    if (time < 60000) { // 1분 동안 점차 밝아짐 => 새벽에서 아침으로 변화
+        r = g = b = time/240+100; // 1분 동안 255에서 0으로 감소
+    }
+    SDL_SetTextureColorMod(bg_texture, r, g, b);
+    SDL_SetTextureColorMod(snakeHead_texture, r, g, b);
+    SDL_SetTextureColorMod(snakeBody_texture, r, g, b);
+    SDL_SetTextureColorMod(snakeTail_texture, r, g, b);
+    SDL_SetTextureColorMod(bombAfter_texture, r, g, b);
+    SDL_SetTextureColorMod(magpie_texture, r, g, b);
+    SDL_SetTextureColorMod(bell_texture, r, g, b);
     SDL_RenderCopy(g_renderer, bg_texture, NULL, &bg_destination_rect);
 
 
@@ -295,22 +313,18 @@ void Stage3::Render() {
     }
 
     //카운트가 100에서 150 사이면 !출력
-    else if (b_count >= 50 && b_count < 70) {
+    else if (b_count >= 50 && b_count < 75) {
         bombAttack* b = bomb->getBombRange();
-        for (int i = 0;i < 9;i++) {//데미지 범위 출력
-            if (b[i].x >= screenWidth / GRID || b[i].x < 0 || b[i].y >= screenHeight / GRID || b[i].y < 1)
-                continue;
-
-            heart_destination_rect.x = b[i].x * GRID;
-            heart_destination_rect.y = b[i].y * GRID;
-            if (i == 4) {
-                SDL_SetTextureColorMod(bell_texture, 255, 0, 0);
-                SDL_RenderCopy(g_renderer, bell_texture, NULL, &heart_destination_rect);
-                SDL_SetTextureColorMod(bell_texture, 255, 255, 255);
-                continue;
-            }
-            SDL_RenderCopy(g_renderer, bombAfter_texture, NULL, &heart_destination_rect);
+        
+        if (b_count % 3 == 0) { // 51 54 57 60 63 66 69 72일 때 실행
+            int i = (b_count / 3) % 17;
+            bomb_source_rect.x = 32 * i; // 0 32 64 
         }
+
+        bomb_destination_rect.x = b[0].x * GRID;
+        bomb_destination_rect.y = b[0].y * GRID;
+
+        SDL_RenderCopy(g_renderer, bombAfter_texture, &bomb_source_rect, &bomb_destination_rect);
     }
 
 
@@ -318,12 +332,11 @@ void Stage3::Render() {
     auto snakeList = snake->getSnakeList();
     auto last = --snakeList.end();
     int angle = 0;
-    int angle2 = 0;
-    int checkPrevDirection = LEFT;
-    int flag = false;
+    int prevD = LEFT;
+    
     for (auto it = snakeList.begin(); it != snakeList.end(); ++it) {
-        snake_destination_rect.x = (*it)->sX*GRID; // 그려질 좌표 지정
-        snake_destination_rect.y = (*it)->sY*GRID;
+        snake_destination_rect.x = (*it)->sX*(GRID); // 그려질 좌표 지정
+        snake_destination_rect.y = (*it)->sY*(GRID);
 
         //각도 설정
         switch ((*it)->dircetion) {
@@ -334,53 +347,49 @@ void Stage3::Render() {
             angle = 90;
             break;
         case UP://위
-            angle = -0;
-
+            angle = 0;
             break;
         case DOWN://아래
             angle = 180;
-            
             break;
         default:
             break;
         }
 
-        //꺾이는 거 검사
-        if (((*it)->dircetion == RIGHT &&checkPrevDirection==DOWN) || ((*it)->dircetion == UP && checkPrevDirection == LEFT) ) {
-            flag = true;
-            angle2 = 180;
-        }
-        else if (((*it)->dircetion == RIGHT && checkPrevDirection == UP) || ((*it)->dircetion == DOWN && checkPrevDirection == LEFT)) {
-            flag = true;
-            angle2 = -90;
-        }
-        else if (((*it)->dircetion == UP && checkPrevDirection == RIGHT) || ((*it)->dircetion == LEFT && checkPrevDirection == DOWN)) {
-            flag = true;
-            angle2 = 90;
-        }
-        else if (((*it)->dircetion == DOWN && checkPrevDirection == RIGHT) || ((*it)->dircetion == LEFT && checkPrevDirection == UP)) {
-            flag = true;
-            angle2 = 0;
-        }
+        
 
         // 뱀의 헤드 노드인 경우에는 헤드 이미지를 사용하고, 그렇지 않은 경우에는 기존의 뱀 이미지를 사용합니다.
         if (it == snakeList.begin()) {
             SDL_RenderCopyEx(g_renderer, snakeHead_texture, NULL, &snake_destination_rect, angle, NULL, SDL_FLIP_NONE);
         }
         else if (it == last) {
+            switch (prevD) {
+            case LEFT://좌
+                angle = -90;
+                break;
+            case RIGHT://우
+                angle = 90;
+                break;
+            case UP://위
+                angle = -0;
+
+                break;
+            case DOWN://아래
+                angle = 180;
+
+                break;
+            default:
+                break;
+            }
             SDL_RenderCopyEx(g_renderer, snakeTail_texture, NULL, &snake_destination_rect, angle, NULL, SDL_FLIP_NONE);
 
         }
         else {
-            if(!flag)
-                SDL_RenderCopyEx(g_renderer, snakeBody_texture, NULL, &snake_destination_rect, angle,NULL, SDL_FLIP_NONE);
-            else
-                SDL_RenderCopyEx(g_renderer, snakeCurve_texture, NULL, &snake_destination_rect, angle2, NULL, SDL_FLIP_NONE);
-
+            SDL_RenderCopyEx(g_renderer, snakeBody_texture, NULL, &snake_destination_rect, angle,NULL, SDL_FLIP_NONE);
+           
         }
 
-        checkPrevDirection = (*it)->dircetion;
-        flag = false;
+       prevD= (*it)->dircetion;
     }
     
     
@@ -400,16 +409,24 @@ void Stage3::Render() {
     heart_destination_rect.h = GRID-15;
     int hp = (int)magpie->getHealth();
 
-    // 까치 렌더링
-    if (!magpie->getInvincible() || SDL_GetTicks() % 500 < 150) { // 무적 상태가 아니거나 0.15초 간격으로 떨림
-        
-
-
-    }
+    // 하트 렌더링
+    
     for (int i = 0;i < 5;i++) {
         
         heart_destination_rect.x = i * GRID;
         heart_destination_rect.y = 0+5;
+
+        if (magpie->getInvincible()) {
+            int timeSinceDamage = SDL_GetTicks() - magpie->getLastDamageTime();
+            if (timeSinceDamage < 100) {
+                // 0.125초와 0.375초에 하트를 흔듬
+                if ((timeSinceDamage % 100) < 20 || (timeSinceDamage % 100) > 80) {
+                    heart_destination_rect.y += 10; // y 좌표를 흔듬
+                }
+            }
+            
+        }
+
         if (hp / 10 != 0) {
             SDL_RenderCopy(g_renderer, heartOne_texture, NULL, &heart_destination_rect);
         }
@@ -443,7 +460,6 @@ Stage3::~Stage3() {
     SDL_DestroyTexture(snakeHead_texture);
     SDL_DestroyTexture(snakeBody_texture);
     SDL_DestroyTexture(snakeTail_texture);
-    SDL_DestroyTexture(snakeCurve_texture);
     SDL_DestroyTexture(bg_texture);
     SDL_DestroyTexture(bell_texture);
     SDL_DestroyTexture(magpie_texture);
