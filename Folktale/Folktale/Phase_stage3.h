@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Creature_stage3.h"
 
@@ -16,12 +16,12 @@ private:
     Snake* snake;
 	Bomb* bomb;
 	
-	//¹æÇâÅ° Á¶ÀÛ º¯¼öµé
+	//ë°©í–¥í‚¤ ì¡°ì‘ ë³€ìˆ˜ë“¤
 	bool f_list[4];
-	int f_state;//ÇöÀç ´­¸° Å° Á¤º¸
-	bool stop;//Á¤Áö Á¤º¸
+	int f_state;//í˜„ì¬ ëˆŒë¦° í‚¤ ì •ë³´
+	bool stop;//ì •ì§€ ì •ë³´
 
-	//½ÂÆĞ È®ÀÎ º¯¼ö
+	//ìŠ¹íŒ¨ í™•ì¸ ë³€ìˆ˜
 	int game_result;
 
 	SDL_RendererFlip flip;
@@ -40,29 +40,28 @@ public:
 	}
 
 private:
-	//Á¾ ÅØ½ºÃÄ 
+	//ì¢… í…ìŠ¤ì³ 
 	SDL_Texture* bell_texture; // the SDL_Texture 
 	SDL_Rect bell_destination_rect; // for destination
-	//±îÄ¡ ÅØ½ºÃÄ
+	//ê¹Œì¹˜ í…ìŠ¤ì³
 	SDL_Texture* magpie_texture; // the SDL_Texture 
 	SDL_Rect magpie_destination_rect; // for destination
-	//±¸··ÀÌ ÅØ½ºÃÄ
+	//êµ¬ë ì´ í…ìŠ¤ì³
 	SDL_Texture* snakeHead_texture; // the SDL_Texture 
 	SDL_Texture* snakeBody_texture;
 	SDL_Texture* snakeTail_texture;
 	SDL_Rect snake_destination_rect; // for destination
 
-	//¹è°æ ÅØ½ºÃÄ
+	//ë°°ê²½ í…ìŠ¤ì³
 	SDL_Texture* bg_texture; // the SDL_Texture 
 	SDL_Rect bg_destination_rect; // for destination
 
-	//ÆøÅº ÅØ½ºÃÄ
-	SDL_Texture* bombPrev_texture;
+	//í­íƒ„ í…ìŠ¤ì³
 	SDL_Texture* bombAfter_texture;
 	SDL_Rect bomb_source_rect; // for destination
 	SDL_Rect bomb_destination_rect;
 
-	//ÇÏÆ® ÅØ½ºÃÄ
+	//í•˜íŠ¸ í…ìŠ¤ì³
 	SDL_Texture* heartZero_texture; // the SDL_Texture 
 	SDL_Texture* heartHalf_texture; // the SDL_Texture 
 	SDL_Texture* heartOne_texture; // the SDL_Texture 

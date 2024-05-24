@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Creature.h"
 #include <list>
 #include <random>
@@ -11,27 +11,27 @@
 
 using namespace std;
 
-//ui Àû¿ë ½Ã °ª ¾ò¾î¿Í¼­ ÇÒ´çÇÏ±â
-//¿©±â¼­ Á¤ÀÇÇÑ Àü¿ª º¯¼ö´Â phase_stage3, main¿¡¼­ »ç¿ë °¡´É
+//ui ì ìš© ì‹œ ê°’ ì–»ì–´ì™€ì„œ í• ë‹¹í•˜ê¸°
+//ì—¬ê¸°ì„œ ì •ì˜í•œ ì „ì—­ ë³€ìˆ˜ëŠ” phase_stage3, mainì—ì„œ ì‚¬ìš© ê°€ëŠ¥
 enum DIRECTION { LEFT, RIGHT, UP, DOWN, STOP };
 
 extern int screenWidth;
 extern int screenHeight;
 
 
-//±¸··ÀÌ ¿¬°á¸®½ºÆ® ³ëµå
+//êµ¬ë ì´ ì—°ê²°ë¦¬ìŠ¤íŠ¸ ë…¸ë“œ
 typedef struct Node {
-	//xÁÂÇ¥ yÁÂÇ¥
+	//xì¢Œí‘œ yì¢Œí‘œ
 	int sX, sY;
 	int dircetion;
 }Node;
 
 
-//±¸··ÀÌ
-class Snake : public Monster  //±¸··ÀÌ
+//êµ¬ë ì´
+class Snake : public Monster  //êµ¬ë ì´
 {
 private:
-	//±¸··ÀÌ ÁÂÇ¥¸¦ ÀúÀåÇÏ°í ¾÷µ¥ÀÌÆ® ÇÒ ¿¬°á¸®½ºÆ®
+	//êµ¬ë ì´ ì¢Œí‘œë¥¼ ì €ì¥í•˜ê³  ì—…ë°ì´íŠ¸ í•  ì—°ê²°ë¦¬ìŠ¤íŠ¸
 	list<Node*> snakeList;
     DIRECTION dSnake;
 	int moveCounter;
@@ -55,7 +55,7 @@ public:
 
 };
 
-//ÆøÅº
+//í­íƒ„
 typedef struct bombAttack {
 	int x;
 	int y;
@@ -89,11 +89,11 @@ public:
 
 
 
-//Á¾
+//ì¢…
 class Bell : public bellAndRabbit
 {
 private:
-    //ºÎ¸ğ °´Ã¼¿¡ ÀÖ´Â ÇÊµå¸¸À¸·Î »ç¿ë
+    //ë¶€ëª¨ ê°ì²´ì— ìˆëŠ” í•„ë“œë§Œìœ¼ë¡œ ì‚¬ìš©
 public:
     Bell(int x, int y, int speed, double health);
     ~Bell();
@@ -105,7 +105,7 @@ public:
   
 };
 
-//±îÄ¡
+//ê¹Œì¹˜
 class Magpie : public Ally
 {
 private:
@@ -121,7 +121,7 @@ public:
 	virtual void move(int newX, int newY);
 	virtual void attackDamage(int attackPower);
 
-	//Ãæµ¹ ¿©ºÎ È®ÀÎ
+	//ì¶©ëŒ ì—¬ë¶€ í™•ì¸
 	bool isCollidingSnake(Snake* snake);
 	bool isCollidingBell(Bell* bell);
 	bool isCollidingBomb(Bomb* bomb);

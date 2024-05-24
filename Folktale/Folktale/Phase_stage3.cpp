@@ -1,48 +1,48 @@
-#include "Phase_stage3.h"
+ï»¿#include "Phase_stage3.h"
 #include <Windows.h>
 #include <iomanip>
 
 extern default_random_engine generator;
 
 Stage3::Stage3() {
-    //1. °´Ã¼ »ı¼º
-    //a. Á¾ »ı¼º
+    //1. ê°ì²´ ìƒì„±
+    //a. ì¢… ìƒì„±
     uniform_int_distribution<int> distributionX(0, screenWidth/GRID-1);
     uniform_int_distribution<int> distributionY(1, screenHeight/GRID-1);
 
 
     bell = new Bell(distributionX(generator), distributionY(generator), 0, 0);
-    //b. ±îÄ¡ »ı¼º
-    magpie = new Magpie(3, 3, 0.5, 50,0); //(0,0)¿¡¼­ ½ÃÀÛ, speed´Â 1,hp´Â 100À¸·Î ¼³Á¤
-    //c. ±¸··ÀÌ »ı¼º
+    //b. ê¹Œì¹˜ ìƒì„±
+    magpie = new Magpie(3, 3, 1, 50,0); //(0,0)ì—ì„œ ì‹œì‘, speedëŠ” 1,hpëŠ” 100ìœ¼ë¡œ ì„¤ì •
+    //c. êµ¬ë ì´ ìƒì„±
     snake = new Snake(0, 0, 1, 100, 10, magpie->getX(),magpie->getY());
-    //d. ÆøÅº »ı¼º
+    //d. í­íƒ„ ìƒì„±
     bomb = new Bomb(0, 0, 1, 100, 5, magpie->getX(), magpie->getY());
 
-    ////2. ÅØ½ºÃÄ °¡Á®¿À±â
-    //a. Á¾ ÅØ½ºÃÄ
+    ////2. í…ìŠ¤ì³ ê°€ì ¸ì˜¤ê¸°
+    //a. ì¢… í…ìŠ¤ì³
     SDL_Surface* temp_sheet_surface = IMG_Load("../../Resource/bell.png");
     bell_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-    SDL_FreeSurface(temp_sheet_surface);//ÇØÁ¦ ÇÊ¼ö
+    SDL_FreeSurface(temp_sheet_surface);//í•´ì œ í•„ìˆ˜
     bell_destination_rect.x = bell->getX();
     bell_destination_rect.y = bell->getY();
     bell_destination_rect.w = GRID;
     bell_destination_rect.h = GRID;
 
-    //b. ±îÄ¡ ÅØ½ºÃÄ
+    //b. ê¹Œì¹˜ í…ìŠ¤ì³
     temp_sheet_surface = IMG_Load("../../Resource/magpie.png");
     magpie_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-    SDL_FreeSurface(temp_sheet_surface);//ÇØÁ¦ ÇÊ¼ö
+    SDL_FreeSurface(temp_sheet_surface);//í•´ì œ í•„ìˆ˜
     magpie_destination_rect.x = magpie->getX()*GRID;
     magpie_destination_rect.y = magpie->getY()*GRID;
     magpie_destination_rect.w = GRID;
     magpie_destination_rect.h = GRID;
 
     
-    //c. ±¸··ÀÌ ÅØ½ºÃÄ
+    //c. êµ¬ë ì´ í…ìŠ¤ì³
     temp_sheet_surface = IMG_Load("../../Resource/snakeHead.png");;
     snakeHead_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-    SDL_FreeSurface(temp_sheet_surface);//ÇØÁ¦ ÇÊ¼ö
+    SDL_FreeSurface(temp_sheet_surface);//í•´ì œ í•„ìˆ˜
     snake_destination_rect.x = snake->getSnakeList().front()->sX;
     snake_destination_rect.y = snake->getSnakeList().front()->sY;
     snake_destination_rect.w = GRID-10;
@@ -50,16 +50,16 @@ Stage3::Stage3() {
 
     temp_sheet_surface = IMG_Load("../../Resource/snakeBody.png");
     snakeBody_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-    SDL_FreeSurface(temp_sheet_surface);//ÇØÁ¦ ÇÊ¼ö
+    SDL_FreeSurface(temp_sheet_surface);//í•´ì œ í•„ìˆ˜
     temp_sheet_surface = IMG_Load("../../Resource/snakeTail.png");
     snakeTail_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-    SDL_FreeSurface(temp_sheet_surface);//ÇØÁ¦ ÇÊ¼ö
+    SDL_FreeSurface(temp_sheet_surface);//í•´ì œ í•„ìˆ˜
 
    
-    //ÆøÅº ÅØ½ºÃÄ 
+    //í­íƒ„ í…ìŠ¤ì³ 
     temp_sheet_surface  = IMG_Load("../../Resource/bombAfter.png");
     bombAfter_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-    SDL_FreeSurface(temp_sheet_surface);//ÇØÁ¦ ÇÊ¼ö
+    SDL_FreeSurface(temp_sheet_surface);//í•´ì œ í•„ìˆ˜
     bomb_source_rect.x = 0;
     bomb_source_rect.y = 0;
     bomb_source_rect.w = 32;
@@ -68,40 +68,40 @@ Stage3::Stage3() {
     bomb_destination_rect.w = GRID*3;
     bomb_destination_rect.h = GRID*3;
 
-    //d. ¹è°æ ÅØ½ºÃÄ
+    //d. ë°°ê²½ í…ìŠ¤ì³
     temp_sheet_surface = IMG_Load("../../Resource/background.png");
     bg_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-    SDL_FreeSurface(temp_sheet_surface);//ÇØÁ¦ ÇÊ¼ö
+    SDL_FreeSurface(temp_sheet_surface);//í•´ì œ í•„ìˆ˜
     bg_destination_rect.x = 0;
     bg_destination_rect.y = 0;
     bg_destination_rect.w = screenWidth;
     bg_destination_rect.h = screenHeight;
 
 
-    //ÇÏÆ® ÅØ½ºÃ³
+    //í•˜íŠ¸ í…ìŠ¤ì²˜
     temp_sheet_surface = IMG_Load("../../Resource/heartZero.png");
     heartZero_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-    SDL_FreeSurface(temp_sheet_surface);//ÇØÁ¦ ÇÊ¼ö
+    SDL_FreeSurface(temp_sheet_surface);//í•´ì œ í•„ìˆ˜
 
     temp_sheet_surface = IMG_Load("../../Resource/heartHalf.png");
     heartHalf_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-    SDL_FreeSurface(temp_sheet_surface);//ÇØÁ¦ ÇÊ¼ö
+    SDL_FreeSurface(temp_sheet_surface);//í•´ì œ í•„ìˆ˜
 
     temp_sheet_surface = IMG_Load("../../Resource/heartOne.png");
     heartOne_texture = SDL_CreateTextureFromSurface(g_renderer, temp_sheet_surface);
-    SDL_FreeSurface(temp_sheet_surface);//ÇØÁ¦ ÇÊ¼ö
+    SDL_FreeSurface(temp_sheet_surface);//í•´ì œ í•„ìˆ˜
 
     heart_destination_rect.w = GRID;
     heart_destination_rect.h = GRID;
 
-    //2. ±âÅ¸ ¼¼ÆÃ
-    f_state = STOP;//¹æÇâÅ° ¾È ´©¸§
-    stop = true; //Á¤Áö »óÈ²À¸·Î ÃÊ±âÈ­
-    //¸ğµÎ ¾È ´­¸° °ÍÀ¸·Î ÃÊ±âÈ­ -> stop
-    for (int i = 0; i < f_state; i++) {//0Àº ÁÂÃø, ...
+    //2. ê¸°íƒ€ ì„¸íŒ…
+    f_state = STOP;//ë°©í–¥í‚¤ ì•ˆ ëˆ„ë¦„
+    stop = true; //ì •ì§€ ìƒí™©ìœ¼ë¡œ ì´ˆê¸°í™”
+    //ëª¨ë‘ ì•ˆ ëˆŒë¦° ê²ƒìœ¼ë¡œ ì´ˆê¸°í™” -> stop
+    for (int i = 0; i < f_state; i++) {//0ì€ ì¢Œì¸¡, ...
         f_list[i] = false;
     }
-    game_result = 0;//1-> ½Â¸®, 2-> ÆĞ¹è
+    game_result = 0;//1-> ìŠ¹ë¦¬, 2-> íŒ¨ë°°
 
     flip = SDL_FLIP_HORIZONTAL;
 }
@@ -120,7 +120,7 @@ void Stage3::HandleEvents() {
         case SDL_KEYDOWN:
 
             if (event.key.keysym.sym == SDLK_LEFT) {
-                f_state = LEFT; //ÇöÀç ´­¸° °ªÀÌ LEFT
+                f_state = LEFT; //í˜„ì¬ ëˆŒë¦° ê°’ì´ LEFT
                 f_list[f_state] = true;
                 stop = false;
 
@@ -163,7 +163,7 @@ void Stage3::HandleEvents() {
 
             }
 
-            //¸¸¾à upµÇÁö ¾ÊÀº ³ğµéÀÌ ÀÖ´Ù¸é
+            //ë§Œì•½ upë˜ì§€ ì•Šì€ ë†ˆë“¤ì´ ìˆë‹¤ë©´
             if (f_list[0])
                 f_state = 0;
             if (f_list[1])
@@ -182,29 +182,29 @@ void Stage3::HandleEvents() {
     }
 }
 void Stage3::Update() {
-    //1. ±îÄ¡
-    //1.1 ±îÄ¡ ÁÂÇ¥ ¾÷µ¥ÀÌÆ®
+    //1. ê¹Œì¹˜
+    //1.1 ê¹Œì¹˜ ì¢Œí‘œ ì—…ë°ì´íŠ¸
     int x = magpie->getX();
     int y = magpie->getY();
-    if (!stop) { //Á¤Áö°¡ ¾Æ´Ï¶ó¸é ±îÄ¡ ÀÌµ¿
-        if (f_state == 0) { //ÁÂÃøÀÌµ¿
+    if (!stop) { //ì •ì§€ê°€ ì•„ë‹ˆë¼ë©´ ê¹Œì¹˜ ì´ë™
+        if (f_state == 0) { //ì¢Œì¸¡ì´ë™
             x -= 1;
             flip = SDL_FLIP_NONE;
         }
-        else if (f_state == 1) {//¿ìÃøÀÌµ¿
+        else if (f_state == 1) {//ìš°ì¸¡ì´ë™
             x += 1;
             flip = SDL_FLIP_HORIZONTAL;
         }
-        else if (f_state == 2) {//À§·Î ÀÌµ¿
+        else if (f_state == 2) {//ìœ„ë¡œ ì´ë™
             y -= 1;
         }
-        else if (f_state == 3) {//¾Æ·¡·Î ÀÌµ¿
+        else if (f_state == 3) {//ì•„ë˜ë¡œ ì´ë™
             y += 1;
         }
 
     }
 
-    //1.2 ±îÄ¡ ÁÂÇ¥ ¹üÀ§
+    //1.2 ê¹Œì¹˜ ì¢Œí‘œ ë²”ìœ„
     if (x > screenWidth/GRID-1) { 
         x = screenWidth / GRID - 1;
     }
@@ -217,70 +217,68 @@ void Stage3::Update() {
     else if (y < 1) {
         y = 1;
     }
-    //1.3 ±îÄ¡ ÀÌµ¿
+    //1.3 ê¹Œì¹˜ ì´ë™
     magpie->move(x, y);   
-    //1.4 ±îÄ¡ ¹«Àû ½Ã°£ ¾÷µ¥ÀÌÆ®
+    //1.4 ê¹Œì¹˜ ë¬´ì  ì‹œê°„ ì—…ë°ì´íŠ¸
     if (magpie->getInvincible() && SDL_GetTicks() - magpie->getLastDamageTime() >= 2000) {
         magpie->setInvincible(false);
     }
     
 
-    //2. ±¸··ÀÌ ¾÷µ¥ÀÌÆ®
+    //2. êµ¬ë ì´ ì—…ë°ì´íŠ¸
     snake->move(magpie->getX(), magpie->getY());
 
-    //3. ÆøÅº ¾÷µ¥ÀÌÆ®
+    //3. í­íƒ„ ì—…ë°ì´íŠ¸
     if(bomb->getCheckCount()>=75)
-        bomb->setCheckCount(-20); //Àç¼³Á¤
-    bomb->setCheckCount(bomb->getCheckCount() + 1); //Ä«¿îÆ® °³¼ö Áõ°¡
-    bomb->move(magpie->getX(), magpie->getY()); //Å¸°Ù ÁÂÇ¥ º¯°æ -> 0 ÀÌÇÏÀÏ ¶§¸¸ °ª º¯°æµÊ
+        bomb->setCheckCount(-20); //ì¬ì„¤ì •
+    bomb->setCheckCount(bomb->getCheckCount() + 1); //ì¹´ìš´íŠ¸ ê°œìˆ˜ ì¦ê°€
+    bomb->move(magpie->getX(), magpie->getY()); //íƒ€ê²Ÿ ì¢Œí‘œ ë³€ê²½ -> 0 ì´í•˜ì¼ ë•Œë§Œ ê°’ ë³€ê²½ë¨
 
 
-    //3. Ãæµ¹ È®ÀÎ
-    //3.1 Á¾ °³¼ö È®ÀÎ
-    if (magpie->isCollidingBell(bell)) {//bellÀÌ¶û ºÎµúÇû´Ù¸é
-        bell->setCount(bell->getCount() + 1); //count°³¼ö ÇÏ³ª Áõ°¡
-        bell->spawn();//Á¾ À§Ä¡ °»½Å
+    //3. ì¶©ëŒ í™•ì¸
+    //3.1 ì¢… ê°œìˆ˜ í™•ì¸
+    if (magpie->isCollidingBell(bell)) {//bellì´ë‘ ë¶€ë”ªí˜”ë‹¤ë©´
+        bell->setCount(bell->getCount() + 1); //countê°œìˆ˜ í•˜ë‚˜ ì¦ê°€
+        bell->spawn();//ì¢… ìœ„ì¹˜ ê°±ì‹ 
     }
 
 
-    //3.2 ±¸··ÀÌ Ãæµ¹ È®ÀÎ
-    if (magpie->isCollidingSnake(snake)) { //snake¶û ºÎµúÇû´Ù¸é hp ±ğÀÓ
-        magpie->GetAttackted(snake->getAttackPower());//µ¥¹ÌÁö ¹ŞÀ½
-        cout << magpie->getHealth() << endl;
+    //3.2 êµ¬ë ì´ ì¶©ëŒ í™•ì¸
+    if (magpie->isCollidingSnake(snake)) { //snakeë‘ ë¶€ë”ªí˜”ë‹¤ë©´ hp ê¹ì„
+        magpie->GetAttackted(snake->getAttackPower());//ë°ë¯¸ì§€ ë°›ìŒ
     }
     
 
-    //3.3 ÆøÅº Ãæµ¹ È®ÀÎ
+    //3.3 í­íƒ„ ì¶©ëŒ í™•ì¸
     if (bomb->getCheckCount() >= 50 && bomb->getCheckCount() < 75){
         if (magpie->isCollidingBomb(bomb)) {
             magpie->GetAttackted(bomb->getAttackPower());
-            cout << magpie->getHealth() << endl;
         }
 
     }
 
 
-    //4. Á¾·á Á¶°Ç È®ÀÎ
-    if (bell->getCount() == 5) {//Á¾ 5°³ ¸ğ¾ÒÀ¸¸é 
-        game_result = 1; //½Â¸®
+    //4. ì¢…ë£Œ ì¡°ê±´ í™•ì¸
+    if (bell->getCount() == 5) {//ì¢… 5ê°œ ëª¨ì•˜ìœ¼ë©´ 
+        game_result = 1; //ìŠ¹ë¦¬
     }
 
     if (magpie->getHealth() <= 0) {
-        game_result = 2; //½ÇÆĞ
+        game_result = 2; //ì‹¤íŒ¨
     }
 }
 void Stage3::Render() {
 
-    //// 1. ¹è°æ ±×¸®±â.
-    // 1.1. Ä¿¼­¸¦ ÄÜ¼Ö È­¸éÀÇ ¿ŞÂÊ À§ ¸ğ¼­¸® ºÎºĞÀ¸·Î ¿Å±ä´Ù. ÁÂÇ¥(0, 0)
-    // <windows.h>¿¡¼­ Á¦°øÇÏ´Â ÇÔ¼ö¸¦ »ç¿ëÇÑ´Ù
+    //// 1. ë°°ê²½ ê·¸ë¦¬ê¸°.
+    // 1.1. ì»¤ì„œë¥¼ ì½˜ì†” í™”ë©´ì˜ ì™¼ìª½ ìœ„ ëª¨ì„œë¦¬ ë¶€ë¶„ìœ¼ë¡œ ì˜®ê¸´ë‹¤. ì¢Œí‘œ(0, 0)
+    // <windows.h>ì—ì„œ ì œê³µí•˜ëŠ” í•¨ìˆ˜ë¥¼ ì‚¬ìš©í•œë‹¤
     
-    //// 1.2. ¹è°æ ±×¸®±â
+    //// 1.2. ë°°ê²½ ê·¸ë¦¬ê¸°
    
     int time = SDL_GetTicks();
-    int r = 0, g = 0, b = 0;
-    if (time < 60000) { // 1ºĞ µ¿¾È Á¡Â÷ ¹à¾ÆÁü => »õº®¿¡¼­ ¾ÆÄ§À¸·Î º¯È­
-        r = g = b = time/240+100; // 1ºĞ µ¿¾È 255¿¡¼­ 0À¸·Î °¨¼Ò
+    int r = 50, g = 50, b = 50;
+    if (time < 60000) { // 1ë¶„ ë™ì•ˆ ì ì°¨ ë°ì•„ì§ => ìƒˆë²½ì—ì„œ ì•„ì¹¨ìœ¼ë¡œ ë³€í™”
+        r = g = b = time/240+100; // 1ë¶„ ë™ì•ˆ 255ì—ì„œ 0ìœ¼ë¡œ ê°ì†Œ
     }
     SDL_SetTextureColorMod(bg_texture, r, g, b);
     SDL_SetTextureColorMod(snakeHead_texture, r, g, b);
@@ -292,16 +290,16 @@ void Stage3::Render() {
     SDL_RenderCopy(g_renderer, bg_texture, NULL, &bg_destination_rect);
 
 
-    //// 2. Ä³¸¯ÅÍ ±×¸®±â.
-    // Á¾ ±×¸®±â
-    bell_destination_rect.x = bell->getX()*GRID; //±×·ÁÁú ÁÂÇ¥ ÁöÁ¤
+    //// 2. ìºë¦­í„° ê·¸ë¦¬ê¸°.
+    // ì¢… ê·¸ë¦¬ê¸°
+    bell_destination_rect.x = bell->getX()*GRID; //ê·¸ë ¤ì§ˆ ì¢Œí‘œ ì§€ì •
     bell_destination_rect.y = bell->getY()*GRID;
     SDL_RenderCopy(g_renderer, bell_texture, NULL, &bell_destination_rect);
     
-    // ÆøÅº ±×¸®±â
+    // í­íƒ„ ê·¸ë¦¬ê¸°
     int b_count = bomb->getCheckCount();
 
-    //Ä«¿îÆ®°¡ 50º¸´Ù ÀÛ°í 0 ÀÌ»óÀÎµ¥ Â¦¼ö¸é ? Ãâ·Â
+    //ì¹´ìš´íŠ¸ê°€ 50ë³´ë‹¤ ì‘ê³  0 ì´ìƒì¸ë° ì§ìˆ˜ë©´ ? ì¶œë ¥
     if (b_count < 50 && b_count >= 0) {
         if (b_count % 2 == 0) {
             heart_destination_rect.x = bomb->getBombRange()[4].x * GRID;
@@ -312,11 +310,11 @@ void Stage3::Render() {
         }
     }
 
-    //Ä«¿îÆ®°¡ 100¿¡¼­ 150 »çÀÌ¸é !Ãâ·Â
+    //ì¹´ìš´íŠ¸ê°€ 100ì—ì„œ 150 ì‚¬ì´ë©´ !ì¶œë ¥
     else if (b_count >= 50 && b_count < 75) {
         bombAttack* b = bomb->getBombRange();
         
-        if (b_count % 3 == 0) { // 51 54 57 60 63 66 69 72ÀÏ ¶§ ½ÇÇà
+        if (b_count % 3 == 0) { // 51 54 57 60 63 66 69 72ì¼ ë•Œ ì‹¤í–‰
             int i = (b_count / 3) % 17;
             bomb_source_rect.x = 32 * i; // 0 32 64 
         }
@@ -328,28 +326,28 @@ void Stage3::Render() {
     }
 
 
-    // ±¸··ÀÌ ±×¸®±â
+    // êµ¬ë ì´ ê·¸ë¦¬ê¸°
     auto snakeList = snake->getSnakeList();
     auto last = --snakeList.end();
     int angle = 0;
     int prevD = LEFT;
     
     for (auto it = snakeList.begin(); it != snakeList.end(); ++it) {
-        snake_destination_rect.x = (*it)->sX*(GRID); // ±×·ÁÁú ÁÂÇ¥ ÁöÁ¤
+        snake_destination_rect.x = (*it)->sX*(GRID); // ê·¸ë ¤ì§ˆ ì¢Œí‘œ ì§€ì •
         snake_destination_rect.y = (*it)->sY*(GRID);
 
-        //°¢µµ ¼³Á¤
+        //ê°ë„ ì„¤ì •
         switch ((*it)->dircetion) {
-        case LEFT://ÁÂ
+        case LEFT://ì¢Œ
             angle = -90;
             break;
-        case RIGHT://¿ì
+        case RIGHT://ìš°
             angle = 90;
             break;
-        case UP://À§
+        case UP://ìœ„
             angle = 0;
             break;
-        case DOWN://¾Æ·¡
+        case DOWN://ì•„ë˜
             angle = 180;
             break;
         default:
@@ -358,23 +356,23 @@ void Stage3::Render() {
 
         
 
-        // ¹ìÀÇ Çìµå ³ëµåÀÎ °æ¿ì¿¡´Â Çìµå ÀÌ¹ÌÁö¸¦ »ç¿ëÇÏ°í, ±×·¸Áö ¾ÊÀº °æ¿ì¿¡´Â ±âÁ¸ÀÇ ¹ì ÀÌ¹ÌÁö¸¦ »ç¿ëÇÕ´Ï´Ù.
+        // ë±€ì˜ í—¤ë“œ ë…¸ë“œì¸ ê²½ìš°ì—ëŠ” í—¤ë“œ ì´ë¯¸ì§€ë¥¼ ì‚¬ìš©í•˜ê³ , ê·¸ë ‡ì§€ ì•Šì€ ê²½ìš°ì—ëŠ” ê¸°ì¡´ì˜ ë±€ ì´ë¯¸ì§€ë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤.
         if (it == snakeList.begin()) {
             SDL_RenderCopyEx(g_renderer, snakeHead_texture, NULL, &snake_destination_rect, angle, NULL, SDL_FLIP_NONE);
         }
         else if (it == last) {
             switch (prevD) {
-            case LEFT://ÁÂ
+            case LEFT://ì¢Œ
                 angle = -90;
                 break;
-            case RIGHT://¿ì
+            case RIGHT://ìš°
                 angle = 90;
                 break;
-            case UP://À§
+            case UP://ìœ„
                 angle = -0;
 
                 break;
-            case DOWN://¾Æ·¡
+            case DOWN://ì•„ë˜
                 angle = 180;
 
                 break;
@@ -393,23 +391,23 @@ void Stage3::Render() {
     }
     
     
-    // ±îÄ¡ ±×¸®±â
-    magpie_destination_rect.x = magpie->getX() * GRID; //±×·ÁÁú ÁÂÇ¥ ÁöÁ¤
+    // ê¹Œì¹˜ ê·¸ë¦¬ê¸°
+    magpie_destination_rect.x = magpie->getX() * GRID; //ê·¸ë ¤ì§ˆ ì¢Œí‘œ ì§€ì •
     magpie_destination_rect.y = magpie->getY() * GRID;
 
-    // ±îÄ¡ ·»´õ¸µ
-    if (!magpie->getInvincible() || SDL_GetTicks() % 500 < 250) { // ¹«Àû »óÅÂ°¡ ¾Æ´Ï°Å³ª 0.25ÃÊ °£°İÀ¸·Î ±ôºı°Å¸²
+    // ê¹Œì¹˜ ë Œë”ë§
+    if (!magpie->getInvincible() || SDL_GetTicks() % 500 < 250) { // ë¬´ì  ìƒíƒœê°€ ì•„ë‹ˆê±°ë‚˜ 0.25ì´ˆ ê°„ê²©ìœ¼ë¡œ ê¹œë¹¡ê±°ë¦¼
         SDL_RenderCopyEx(g_renderer, magpie_texture, NULL, &magpie_destination_rect, 0, NULL, flip);
     }
 
 
-    //ÇÏÆ® Ãâ·Â
+    //í•˜íŠ¸ ì¶œë ¥
 
     heart_destination_rect.w = GRID-15;
     heart_destination_rect.h = GRID-15;
     int hp = (int)magpie->getHealth();
 
-    // ÇÏÆ® ·»´õ¸µ
+    // í•˜íŠ¸ ë Œë”ë§
     
     for (int i = 0;i < 5;i++) {
         
@@ -419,9 +417,9 @@ void Stage3::Render() {
         if (magpie->getInvincible()) {
             int timeSinceDamage = SDL_GetTicks() - magpie->getLastDamageTime();
             if (timeSinceDamage < 100) {
-                // 0.125ÃÊ¿Í 0.375ÃÊ¿¡ ÇÏÆ®¸¦ Èçµë
+                // 0.125ì´ˆì™€ 0.375ì´ˆì— í•˜íŠ¸ë¥¼ í”ë“¬
                 if ((timeSinceDamage % 100) < 20 || (timeSinceDamage % 100) > 80) {
-                    heart_destination_rect.y += 10; // y ÁÂÇ¥¸¦ Èçµë
+                    heart_destination_rect.y += 10; // y ì¢Œí‘œë¥¼ í”ë“¬
                 }
             }
             
@@ -442,11 +440,11 @@ void Stage3::Render() {
         hp -= 10;
     }
 
-    //¸ğÀº Á¾ °³¼ö Ãâ·Â
+    //ëª¨ì€ ì¢… ê°œìˆ˜ ì¶œë ¥ -> ì•„ì§ ì•ˆ í•¨
     
 
-    //// 3. ÇÁ·¹ÀÓ ¿Ï¼º.
-    // std::coutÀ¸·Î Ãâ·ÂÇÑ ³»¿ë Áß, ¾ÆÁ÷ È­¸é¿¡ Ç¥½ÃµÇ ¾Ê°í ¹öÆÛ¿¡ ³²¾Æ ÀÖ´Â °ÍÀÌ ÀÖ´Ù¸é, ¸ğµÎ È­¸é¿¡ Ãâ·ÂµÇµµ·Ï ÇÑ´Ù.
+    //// 3. í”„ë ˆì„ ì™„ì„±.
+    // std::coutìœ¼ë¡œ ì¶œë ¥í•œ ë‚´ìš© ì¤‘, ì•„ì§ í™”ë©´ì— í‘œì‹œë˜ ì•Šê³  ë²„í¼ì— ë‚¨ì•„ ìˆëŠ” ê²ƒì´ ìˆë‹¤ë©´, ëª¨ë‘ í™”ë©´ì— ì¶œë ¥ë˜ë„ë¡ í•œë‹¤.
     SDL_RenderPresent(g_renderer);
     
 }
@@ -456,7 +454,7 @@ void Stage3::Reset() {
 
 
 Stage3::~Stage3() {
-    //ÀÌ¹ÌÁö ÅØ½ºÃÄ ÇØÁ¦
+    //ì´ë¯¸ì§€ í…ìŠ¤ì³ í•´ì œ
     SDL_DestroyTexture(snakeHead_texture);
     SDL_DestroyTexture(snakeBody_texture);
     SDL_DestroyTexture(snakeTail_texture);
@@ -468,7 +466,7 @@ Stage3::~Stage3() {
     SDL_DestroyTexture(heartOne_texture);
 
 
-    //°´Ã¼ ÇØÁ¦
+    //ê°ì²´ í•´ì œ
     delete bell;
     delete magpie;
     delete snake;
