@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Include;..\Include\SDL2;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Include;..\Include\SDL2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,9 +134,17 @@
     <ClInclude Include="Creature_stage1.h" />
     <ClInclude Include="Creature_stage2.h" />
     <ClInclude Include="Creature_stage3.h" />
+    <ClInclude Include="Phase_stage2Game.h" />
+    <ClInclude Include="Phase_stage2Ending.h" />
+    <ClInclude Include="Phase_stage2Intro.h" />
+    <ClInclude Include="STAGE2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Phase_stage2Ending.cpp" />
+    <ClCompile Include="Phase_stage2.cpp" />
+    <ClCompile Include="Creature_stage2.cpp" />
+    <ClCompile Include="Phase_stage2Intro.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
